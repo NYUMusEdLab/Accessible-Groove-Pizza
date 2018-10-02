@@ -1,0 +1,26 @@
+SPACE: play whole beat
+SHIFT + SPACE: play current layer
+
+ENTER: add a pizza/beat
+
+LEFT & RIGHT Arrow Keys: navigate between different pizzas/beats
+UP & DOWN Arrow Keys: like 1, 2, 3, 4, navigates through the layers of a pizza
+
+1: go to center
+	Q W E R T: choose afro-Latin/Hip-Hop/Jazz/Rock/Techno (audio cues upon selection?)
+2: go to layer 2
+3: go to layer 3
+4: go to layer 4
+	Q: slice 1 / W: slice 3 / E: slice 5 / R: slice 7 / T: slice 9 / Y: slice 11 / U: slice 13 / I: slice 15
+	A: slice 2 / S: slice 4 / D: slice 6 / F: slice 8 / G: slice 10 / H: slice 12 / J: slice 14 / K: slice 16
+
+Z & X: rotate the pizza layer left/right
+
+HTML DOM Sliders: 
+Volume 0-100
+BPM      0-180
+Swing    0-50
+Slices     0-16
+
+HTML Buttons:
+downloads & shares
