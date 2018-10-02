@@ -1,5 +1,5 @@
 SPACE: play whole beat
-SHIFT + SPACE: play current layer
+ALT + SPACE: play current layer
 
 ENTER: add a pizza/beat
 
