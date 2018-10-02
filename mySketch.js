@@ -9,6 +9,7 @@ function setup() {
 
 function draw() {
 	pizza(width/2, height/2, 100, 1.5);
+	nodeGrid(50, 100, 400, 200, 16);
 }
 
 function pizza(pizzaX, pizzaY, innerSize, sizeRatio){
@@ -105,4 +106,38 @@ function pizzaNode(nodeX, nodeY){
 	if (this.clicked === true){
 		this.fillColor = 0;
 	}
+}
+
+function nodeGrid(gridX, gridY, gridW, gridH, numSlice){
+	this.gridX = gridX;
+	this.gridY = gridY;
+	this.gridW = gridW;
+	this.gridH = gridH;
+	this.numSlice = numSlice;
+	this.rectH = gridH/4; // there should be four rows: numbers & pizza nodes
+	this.rectW = gridW/numSlice;
+	rectMode(CORNER); // this is default
+	// draw the bg rectangle
+	noStroke();
+	fill(255);
+	rect(this.gridX, this.gridY, this.gridW, this.gridH);
+
+	// draw the layer rectangles
+	stroke(0);
+	fill(100);
+	let rectY = this.gridY;
+	// loop through y
+	for (let i=0; i<4; i++){
+		let rectX = this.gridX;
+		// loop through x
+		for (let j=0; j<this.numSlice; j++){
+			rect(rectX, rectY, this.rectW, this.rectH);
+			rectX += this.rectW;
+		}
+		rectY += this.rectH;
+	}
+}
+
+function gridNode(nodeX, nodeY){
+	
 }
