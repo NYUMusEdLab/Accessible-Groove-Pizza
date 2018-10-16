@@ -31,6 +31,22 @@ function keyPressed(){
 	}
 }
 
+// give it an array of pizzaNode objects
+function playLayerBeat(pizzaNodesArr){
+	this.pizzaNodesArr = pizzaNodesArr;
+	this.beatMap = [];
+	// loop through the array and creates a beat map
+	for (let i=0;i<this.pizzaNodesArr.length;i++){
+		let currentNodeBeat = this.pizzaNodesArr[i].clicked;
+		if (currentNodeBeat === true){
+			this.beatMap.push('+');
+		}
+		else{
+			this.beatMap.push('-');
+		}
+	}
+}
+
 
 ////////////////////////////////////////////////////// The Pizza Part /////////////////////////////////////////////////////////////////////////////
 
