@@ -2,22 +2,48 @@
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 */
+let myPizza = new pizza(1920/2.5, 1080/3, 100, 1.5, 16);
+
+function preload(){
+	//player = new Tone.synth.toMaster();
+}
 function setup() {
 	createCanvas(windowWidth, windowHeight);
-	background(210);              																										// color light grey
+	// color light grey
+	background(210);
 }
 
 function draw() {
-	pizza(width/2, height/2, 100, 1.5);
 	nodeGrid(50, 100, 400, 200, 16);
+	myPizza.drawPizza();
+	
+	// show the pizza nodes objects
+	for (let i=0;i<myPizza.pizzaSlicesArr.length;i++){
+		console.log(myPizza.pizzaSlicesArr[i].pizzaNodesArr);
+	}
 }
 
-function pizza(pizzaX, pizzaY, innerSize, sizeRatio){
+let startPlaying = false;
+
+function keyPressed(){
+	if (keyCode === 32){
+		startPlaying = true;
+	}
+}
+
+
+////////////////////////////////////////////////////// The Pizza Part /////////////////////////////////////////////////////////////////////////////
+
+function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices){
 	this.innerSize = innerSize; // radius in pixels of the inner circle
 	this.sizeRatio = sizeRatio; // ratio for increasing the size of circles
 	// position of center of pizza
 	this.pizzaX = pizzaX;
 	this.pizzaY = pizzaY;
+	this.numSlices = numSlices;
+	
+	// have an array to store all the pizza slices to access later
+	this.pizzaSlicesArr = [];
 	
 	// draw the pizza!
 	/*
@@ -36,53 +62,87 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio){
 	?????? should we use the arc function instead of ellipse ??????
 	?????? arc(x, y, w, h, start, stop, [mode])              ??????
 	*/
-	
-	// draw the slices of pizza
 	// outer circle
-	pizzaSlices(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, 250, 140, 141) // color peachy pink
+	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, 250, 140, 141));// color peachy pink
 	// middle circle
-	pizzaSlices(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*2, 62, 173, 93); // color green
+	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*2, 62, 173, 93));// color green
 	// inter circle
-	pizzaSlices(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio, 173, 80, 80);   // color dark peachy pink
-	// inner circle of pizza
-	fill(140, 250, 170);                                                                  								// color light green
-	ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);
+	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio, 173, 80, 80));  // color dark peachy pink
+	
+	
+	this.drawPizza = function(){
+		push();
+		// draw the slices of pizza
+		for (let i=0; i<this.pizzaSlicesArr.length; i++){
+			this.pizzaSlicesArr[i].drawPizzaSlices();
+		}
+		// inner circle of pizza
+		fill(140, 250, 170);                                                                  								// color light green
+		ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);		
+		pop();
+	}
+
 }
 
-function pizzaSlices(sliceX, sliceY, sliceSize, r, g, b){
+function pizzaSlices(numSlices, sliceX, sliceY, sliceSize, r, g, b){
+	this.numSlices = numSlices;
 	this.sliceX = sliceX;
 	this.sliceY = sliceY;
 	this.sliceSize = sliceSize;
 	this.r = r;
 	this.g = g;
 	this.b = b;
-	
-	// change angle mode to degrees!
-	angleMode(DEGREES);
-	// draw 16 slices
-						stroke(200);      																																	// stroke color light grey
-	fill(r, g, b); 
+	// to draw
 	this.startAngle = 0;
-	this.increaseAngle = 360/16; // 22.5
-	// ????????????????????? angles are kind of wrong??????????????????????
-	// why i <17 instead of 16?
-	for (var i=0; i<17; i++){
-		arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.increaseAngle, PIE);
+	this.increaseAngle = 2*Math.PI/this.numSlices; // 22.5 if 16 slices
+	// have an array to store all the pizza nodes to access later
+	this.pizzaNodesArr = []; 
+	
+
+	// creating pizza nodes here
+	for (var i=0; i<this.numSlices+1; i++){
 		let nodeAngle = this.startAngle+this.increaseAngle/2;
 		this.startAngle += this.increaseAngle;
-		// draw the nodes on each slice!
-		// wish i could access pizze.innerSize here
-		let nodeX = this.sliceX + (((this.sliceSize-100)/2)*cos(nodeAngle));
-		let nodeY = this.sliceY + (((this.sliceSize-100)/2)*sin(nodeAngle));
-		pizzaNode(nodeX, nodeY);
+		// create the nodes on each slice!
+		let nodeX = this.sliceX + (((this.sliceSize-100)/2)*Math.cos(nodeAngle));
+		let nodeY = this.sliceY + (((this.sliceSize-100)/2)*Math.sin(nodeAngle));
+		let currentPizzaNode = new pizzaNode(nodeX, nodeY);
+		this.pizzaNodesArr.push(currentPizzaNode);
+	}	
+
+	this.drawPizzaSlices = function(){
+		// reset angles
+		this.startAngle = 0;
+		this.increaseAngle = 2*Math.PI/this.numSlices; // 2PI/16 slices
+		
+		push();
+		// change angle mode to RADIANS!
+		angleMode(RADIANS);
+		// stroke color light grey
+		stroke(200);      																																	
+		fill(r, g, b); 
+		
+		// ????????????????????? angles are kind of wrong??????????????????????
+		// why 17 instead of 16
+		// draw 16 slices
+		for (var i=0; i<this.numSlices+1; i++){
+			arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.increaseAngle, PIE);
+		
+			let nodeAngle = this.startAngle+this.increaseAngle/2;
+			this.startAngle += this.increaseAngle;
+			
+			// draw the nodes on each slice!
+			this.pizzaNodesArr[i].drawPizzaNode();
+		}
+		pop();
 	}
+
 }
 
 // this function would probably draw shapes
 function pizzaNodes(){
 }
 
-// !!!!!!!!!!!this code needs to be improved as to create new object instances & store in a list!!!!!!!!!!!!!
 function pizzaNode(nodeX, nodeY){
 	this.nodeX = nodeX;
 	this.nodeY = nodeY;
@@ -91,22 +151,40 @@ function pizzaNode(nodeX, nodeY){
 	this.clicked = false;
 	//console.log(this.clicked);
 	
-	// draw the node!
-	push();
-	noStroke();
-	fill(fillColor);
-	ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
-	pop();
-	
-	// check if node is clicked
-	if (mouseIsPressed && (this.nodeX-this.nodeSize < mouseX && mouseX < this.nodeX+this.nodeSize) && (this.nodeY-this.nodeSize < mouseY && mouseY < this.nodeY+this.nodeSize)){
-		this.clicked = true;
-	}
-	// if node is clicked, change it to a different color
-	if (this.clicked === true){
-		this.fillColor = 0;
+	this.drawPizzaNode = function(){
+		// draw the node!
+		push();
+		noStroke();
+		fill(this.fillColor);
+		ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
+		
+		//function mouseClicked()
+		// check if node is clicked
+		if (this.clicked === false 
+				&& mouseIsPressed 
+				&& dist(mouseX, mouseY, this.nodeX, this.nodeY)<=this.nodeSize){
+			this.clicked = true;
+		}
+		else if (this.clicked === true 
+				&& mouseIsPressed 
+				&& dist(mouseX, mouseY, this.nodeX, this.nodeY)<=this.nodeSize){
+			this.clicked = false;
+		}
+		// if node is clicked, change it to a different color
+		if (this.clicked === true){
+			this.fillColor = 0;
+		}
+		else{
+			this.fillColor = 255;
+		}
+		
+		pop();
 	}
 }
+
+//////////////////////////////////////////////////////////////////// End of Pizza Part ///////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////The Other Stuff///////////////////////////////////////////////////////////////////
 
 function nodeGrid(gridX, gridY, gridW, gridH, numSlice){
 	this.gridX = gridX;
@@ -121,7 +199,7 @@ function nodeGrid(gridX, gridY, gridW, gridH, numSlice){
 	noStroke();
 	fill(255);
 	rect(this.gridX, this.gridY, this.gridW, this.gridH);
-
+	
 	// draw the layer rectangles
 	stroke(0);
 	fill(100);
@@ -141,3 +219,7 @@ function nodeGrid(gridX, gridY, gridW, gridH, numSlice){
 function gridNode(nodeX, nodeY){
 	
 }
+
+///////////////////////////////////////The End of Other Stuff//////////////////////////////////////////////////////////////////
+
+
