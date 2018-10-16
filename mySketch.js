@@ -184,22 +184,6 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices){
 	this.pizzaSlicesArr = [];
 	
 	// draw the pizza!
-	/*
-	// outer circle
-	fill(250, 140, 141);           // color peachy pink
-	ellipse(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, this.innerSize + this.innerSize*this.sizeRatio*3);
-	// middle circle
-	fill(62, 173, 93);             // color green
-	ellipse(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*2, this.innerSize + this.innerSize*this.sizeRatio*2);
-	// inter circle
-	fill(173, 80, 80);             // color dark peachy pink
-	ellipse(this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio, this.innerSize + this.innerSize*this.sizeRatio);
-	// inner instrument circle
-	*/
-	/*
-	?????? should we use the arc function instead of ellipse ??????
-	?????? arc(x, y, w, h, start, stop, [mode])              ??????
-	*/
 	// outer circle
 	this.pizzaSlicesArr.push(new pizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, 250, 140, 141));// color peachy pink
 	// middle circle
@@ -264,8 +248,6 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b){
 		stroke(200);      																																	
 		fill(r, g, b); 
 		
-		// ????????????????????? angles are kind of wrong??????????????????????
-		// why 17 instead of 16
 		// draw 16 slices
 		for (var i=0; i<this.numSlices; i++){
 			arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle+this.increaseAngle, PIE);
