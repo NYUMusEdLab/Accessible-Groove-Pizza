@@ -18,17 +18,60 @@ function draw() {
 	myPizza.drawPizza();
 	
 	// show the pizza nodes objects
+	/*
 	for (let i=0;i<myPizza.pizzaSlicesArr.length;i++){
 		console.log(myPizza.pizzaSlicesArr[i].pizzaNodesArr);
 	}
+	*/
+
+	// check keyboard
+	console.log('layer: '+currentLayer+' slice: '+currentSlice);
 }
 
 let startPlaying = false;
+let currentLayer = 1;
+let currentSlice = 1;
+let changeNode = false;
 
 function keyPressed(){
+	// press space, play beats
 	if (keyCode === 32){
 		startPlaying = true;
 	}
+	// press enter control the node
+	else if (keyCode === ENTER){
+		changeNode = true;
+	}
+	
+	// press 1
+	if (keyCode === 49){
+	}
+	// press 2
+	else if (keyCode === 50){
+		currentLayer = 2;
+	}
+	// press 3
+	else if (keyCode === 51){
+		currentLayer = 3;
+	}
+	// press 4
+	else if (keyCode === 52){
+		currentLayer = 4;
+	}
+	
+	// press Q
+	if (keyCode === 81){
+		currentSlice = 1
+	}
+	// press A
+	else if (keyCode === 65){
+		currentSlice = 2
+	}
+	// press W
+	else if (keyCode === 87){
+		currentSlice = 3
+	}
+	
 }
 
 // give it an array of pizzaNode objects
