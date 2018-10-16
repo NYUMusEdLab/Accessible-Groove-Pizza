@@ -5,33 +5,35 @@ http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 let myPizza = new pizza(1920/2.5, 1080/3, 100, 1.5, 16);
 
 function preload(){
-	//player = new Tone.synth.toMaster();
+	//let synth = new Tone.Synth().toMaster();
 }
 function setup() {
 	createCanvas(windowWidth, windowHeight);
-	// color light grey
-	background(210);
+
+	// show the pizza nodes objects
+	console.log(myPizza.pizzaSlicesArr);
+
 }
 
 function draw() {
+	// color light grey
+	background(210);
 	nodeGrid(50, 100, 400, 200, 16);
 	myPizza.drawPizza();
 	
-	// show the pizza nodes objects
-	/*
-	for (let i=0;i<myPizza.pizzaSlicesArr.length;i++){
-		console.log(myPizza.pizzaSlicesArr[i].pizzaNodesArr);
-	}
-	*/
-
-	// check keyboard
-	console.log('layer: '+currentLayer+' slice: '+currentSlice);
+	push();
+	noStroke();
+	fill(0);
+	text('Current Layer: '+currentLayer+' Current Slice: '+currentSlice, width-width/5, height/5);
+	pop();
 }
+
+///////////////////////////////////////////////////// Keyboard Stuff //////////////////////////////////////////////////////////////////
 
 let startPlaying = false;
 let currentLayer = 1;
 let currentSlice = 1;
-let changeNode = false;
+let currentNode;
 
 function keyPressed(){
 	// press space, play beats
@@ -40,11 +42,30 @@ function keyPressed(){
 	}
 	// press enter control the node
 	else if (keyCode === ENTER){
-		changeNode = true;
+		// if at center layer
+		if (currentLayer === 1){
+		}
+		else{
+			// make sure we are within limit to adjust nodes
+			if (currentSlice<=myPizza.numSlices){
+				// loop through pizzaSlicesArr
+				for(let i=0; i<myPizza.pizzaSlicesArr.length;i++){
+					// if layer number match
+					if (currentLayer === myPizza.pizzaSlicesArr[i].layer){
+						currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice-1];
+						console.log(currentNode);
+						// turn it around
+						currentNode.clicked = !currentNode.clicked;
+					}
+				}
+			}
+		}
 	}
 	
+	// MOVE AROUND LAYER
 	// press 1
 	if (keyCode === 49){
+		currentLayer = 1;
 	}
 	// press 2
 	else if (keyCode === 50){
@@ -59,6 +80,7 @@ function keyPressed(){
 		currentLayer = 4;
 	}
 	
+	// MOVE AROUND NODES
 	// press Q
 	if (keyCode === 81){
 		currentSlice = 1
@@ -71,8 +93,63 @@ function keyPressed(){
 	else if (keyCode === 87){
 		currentSlice = 3
 	}
-	
+	// press S
+	else if (keyCode === 83){
+		currentSlice = 4
+	}
+	// press E
+	else if (keyCode === 69){
+		currentSlice = 5
+	}
+	// press D
+	else if (keyCode === 68){
+		currentSlice = 6
+	}
+	// press R
+	else if (keyCode === 82){
+		currentSlice = 7
+	}
+	// press F
+	else if (keyCode === 70){
+		currentSlice = 8
+	}
+	// press T
+	else if (keyCode === 84){
+		currentSlice = 9
+	}
+	// press G
+	else if (keyCode === 71){
+		currentSlice = 10
+	}
+	// press Y
+	else if (keyCode === 89){
+		currentSlice = 11
+	}
+	// press H
+	else if (keyCode === 72){
+		currentSlice = 12
+	}
+	// press U
+	else if (keyCode === 85){
+		currentSlice = 13
+	}
+	// press J
+	else if (keyCode === 74){
+		currentSlice = 14
+	}
+	// press I
+	else if (keyCode === 73){
+		currentSlice = 15
+	}
+	// press K
+	else if (keyCode === 75){
+		currentSlice = 16
+	}
 }
+
+///////////////////////////////////////////// End of Keyboard Stuff ////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////// Sound Stuff ////////////////////////////////////////////////////////////////////////////////
 
 // give it an array of pizzaNode objects
 function playLayerBeat(pizzaNodesArr){
@@ -89,6 +166,8 @@ function playLayerBeat(pizzaNodesArr){
 		}
 	}
 }
+
+////////////////////////////////////////////End of Sound Stuff ////////////////////////////////////////////////////////////////////
 
 
 ////////////////////////////////////////////////////// The Pizza Part /////////////////////////////////////////////////////////////////////////////
@@ -122,11 +201,11 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices){
 	?????? arc(x, y, w, h, start, stop, [mode])              ??????
 	*/
 	// outer circle
-	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, 250, 140, 141));// color peachy pink
+	this.pizzaSlicesArr.push(new pizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*3, 250, 140, 141));// color peachy pink
 	// middle circle
-	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*2, 62, 173, 93));// color green
+	this.pizzaSlicesArr.push(new pizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio*2, 62, 173, 93));// color green
 	// inter circle
-	this.pizzaSlicesArr.push(new pizzaSlices(this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio, 173, 80, 80));  // color dark peachy pink
+	this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize*this.sizeRatio, 173, 80, 80));  // color dark peachy pink
 	
 	
 	this.drawPizza = function(){
@@ -138,12 +217,15 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices){
 		// inner circle of pizza
 		fill(140, 250, 170);                                                                  								// color light green
 		ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);		
+		// outer numbers
+		this.pizzaSlicesArr[2].drawNum = true;
 		pop();
 	}
 
 }
 
-function pizzaSlices(numSlices, sliceX, sliceY, sliceSize, r, g, b){
+function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b){
+	this.layer = layer;
 	this.numSlices = numSlices;
 	this.sliceX = sliceX;
 	this.sliceY = sliceY;
@@ -151,6 +233,7 @@ function pizzaSlices(numSlices, sliceX, sliceY, sliceSize, r, g, b){
 	this.r = r;
 	this.g = g;
 	this.b = b;
+	this.drawNum = false; // set to true on outer layer
 	// to draw
 	this.startAngle = 0;
 	this.increaseAngle = 2*Math.PI/this.numSlices; // 22.5 if 16 slices
@@ -159,20 +242,20 @@ function pizzaSlices(numSlices, sliceX, sliceY, sliceSize, r, g, b){
 	
 
 	// creating pizza nodes here
-	for (var i=0; i<this.numSlices+1; i++){
+	for (var i=0; i<this.numSlices; i++){
 		let nodeAngle = this.startAngle+this.increaseAngle/2;
 		this.startAngle += this.increaseAngle;
 		// create the nodes on each slice!
 		let nodeX = this.sliceX + (((this.sliceSize-100)/2)*Math.cos(nodeAngle));
 		let nodeY = this.sliceY + (((this.sliceSize-100)/2)*Math.sin(nodeAngle));
-		let currentPizzaNode = new pizzaNode(nodeX, nodeY);
+		let currentPizzaNode = new pizzaNode(i+1, nodeX, nodeY);
 		this.pizzaNodesArr.push(currentPizzaNode);
 	}	
 
 	this.drawPizzaSlices = function(){
 		// reset angles
 		this.startAngle = 0;
-		this.increaseAngle = 2*Math.PI/this.numSlices; // 2PI/16 slices
+		this.increaseAngle = (2*Math.PI/this.numSlices); // 2PI/16 slices
 		
 		push();
 		// change angle mode to RADIANS!
@@ -184,25 +267,35 @@ function pizzaSlices(numSlices, sliceX, sliceY, sliceSize, r, g, b){
 		// ????????????????????? angles are kind of wrong??????????????????????
 		// why 17 instead of 16
 		// draw 16 slices
-		for (var i=0; i<this.numSlices+1; i++){
-			arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.increaseAngle, PIE);
+		for (var i=0; i<this.numSlices; i++){
+			arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle+this.increaseAngle, PIE);
 		
 			let nodeAngle = this.startAngle+this.increaseAngle/2;
-			this.startAngle += this.increaseAngle;
 			
+			// if it's layer 4 and we draw the numbers around
+			if (this.drawNum === true){
+				push();
+				noStroke();      																																	
+				fill(0); 
+				let textX = this.sliceX + ((this.sliceSize+50)*Math.cos(nodeAngle));
+				let textY = this.sliceY + ((this.sliceSize+50)*Math.sin(nodeAngle));
+				text(this.pizzaNodesArr[i].slice, textX, textY);
+				pop();
+			}
+			this.startAngle += this.increaseAngle;
 			// draw the nodes on each slice!
 			this.pizzaNodesArr[i].drawPizzaNode();
 		}
 		pop();
 	}
-
 }
 
 // this function would probably draw shapes
 function pizzaNodes(){
 }
 
-function pizzaNode(nodeX, nodeY){
+function pizzaNode(slice, nodeX, nodeY){
+	this.slice = slice;
 	this.nodeX = nodeX;
 	this.nodeY = nodeY;
 	this.nodeSize = 15;
