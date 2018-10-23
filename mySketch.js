@@ -3,15 +3,13 @@ Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 */
 let myPizza = new pizza(1920 / 2.5, 1080 / 3, 100, 1.5, 16);
-let synth;
+
 let myVoice;
 
 function preload() {
     // audio cues
     myVoice = new p5.Speech();
     myVoice.onLoad = voicesLoaded;
-
-    
 }
 
 function setup() {
@@ -19,14 +17,68 @@ function setup() {
 
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
-
-    synth = new Tone.Synth();
 }
 
 function voicesLoaded() {
-    myVoice.interrupt = false;
+    myVoice.interrupt = true;
     myVoice.setRate(2);
 }
+
+/////////////////////////////////////////// Audio Stuff ////////////////////////////////////////////////////////////////////////////////
+let bpm = 120;
+Tone.Transport.bpm.value = bpm;
+let beatDur = '16n';
+
+// all the sound sources
+let kick = new Tone.Player('audio/Kick.wav').toMaster();
+let snare = new Tone.Player('audio/Snare.wav').toMaster();
+let hat = new Tone.Player('audio/HH.mp3').toMaster();
+
+// an arr to store all types of sounds
+let soundArr = [{name: 'Some Name', sounds: [kick, snare, hat]},
+                {name: 'Other Name', sounds: [hat, snare, kick]}]
+let currentInst = soundArr[0]; // default
+
+// give it an array of pizzaNode objects
+function mapBeats(pizzaNodesArr) {
+    this.pizzaNodesArr = pizzaNodesArr;
+    this.beatMap = [];
+    // loop through the array and creates a beat map
+    for (let i = 0; i < this.pizzaNodesArr.length; i++) {
+        let currentNodeBeat = this.pizzaNodesArr[i].isActive;
+        this.beatMap.push(currentNodeBeat);
+    }
+    return this.beatMap
+}
+
+let kick_beats; //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
+let snare_beats; //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
+let hat_beats; //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
+let beats; //= [kick_beats, snare_beats, hat_beats];
+
+let loop = new Tone.Sequence(function(time, col){
+    let column = getBeatColumn(beats, col);
+    for(let i = 0; i < column.length; i++) {
+        if (column[i]) {
+            playSound(currentInst.sounds[i], time);
+        }
+    }
+}, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], beatDur);
+loop.start();
+
+function playSound(samp, time) {
+    if (samp.loaded) {
+        samp.start(time, 0, beatDur);
+    }
+}
+
+function getBeatColumn(arr, col) {
+    return arr.map(function(row) {
+        return row[col];
+    });
+}
+
+////////////////////////////////////////////End of Audio Stuff ////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////// Draw Stuff ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,24 +94,54 @@ function draw() {
     fill(0);
     text('Current Layer: ' + currentLayer + ' Current Slice: ' + currentSlice, width - width / 5, height / 5);
     pop();
+
+    // renew beats in draw
+    kick_beats = mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
+    snare_beats = mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
+    hat_beats = mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
+    beats = [kick_beats, snare_beats, hat_beats];
 }
 
 ///////////////////////////////// End of Draw Stuff ///////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////// Mouse Stuff /////////////////////////////////////////////////////////////////////////////
+// change the activeness of each node
+function mouseReleased(){
+    // loop through all nodes
+    for (let i=0; i<myPizza.pizzaSlicesArr.length;i++){
+        for (let j=0; j<myPizza.pizzaSlicesArr[i].pizzaNodesArr.length; j++){
+            let currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
+            if (dist(mouseX, mouseY, currentNode.nodeX, currentNode.nodeY) <= currentNode.nodeSize) {
+                currentNode.isActive = !currentNode.isActive;
+            } 
+        }
+    }
+}
+//////////////////////////////////////////// End of Mouse Stuff /////////////////////////////////////////////////////////////////////
+
 ///////////////////////////////////////////////////// Keyboard Stuff //////////////////////////////////////////////////////////////////
 
 let startPlaying = false;
-let currentLayer = 1;
+let currentLayer = 2;
 let currentSlice = 1;
 let currentNode;
 
 function keyPressed() {
+    console.log(beats);
+
     // press space, play beats
     if (keyCode === 32) {
-        startPlaying = true;
+        startPlaying = !startPlaying;
+        if (startPlaying){
+            Tone.Transport.start();
+        }
+        else{
+            Tone.Transport.stop();
+        }
     }
+
     // press enter control the node
-    else if (keyCode === ENTER) {
+    if (keyCode === ENTER) {
         // if at center layer
         if (currentLayer === 1) {} else {
             // make sure we are within limit to adjust nodes
@@ -71,10 +153,10 @@ function keyPressed() {
                         currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice - 1];
                         console.log(currentNode);
                         // turn it around
-                        currentNode.clicked = !currentNode.clicked;
+                        currentNode.isActive = !currentNode.isActive;
                     }
                 }
-                if (currentNode.clicked === true) {
+                if (currentNode.isActive === true) {
                     myVoice.speak('Beat on.');
                 } else {
                     myVoice.speak('Beat off.')
@@ -105,7 +187,33 @@ function keyPressed() {
         myVoice.speak('Layer 4.');
     }
 
-    if (currentLayer != 1) {
+    // if we are on instrument layer, qawse controls which type of music to play
+    if (currentLayer === 1){
+        // press Q
+        if (keyCode === 81) {
+            currentInst = soundArr[0];
+            myVoice.speak(currentInst.name);
+        }
+        // press A
+        else if (keyCode === 65) {
+            currentInst = soundArr[1];
+            myVoice.speak(currentInst.name);
+        }
+        // press W
+        else if (keyCode === 87) {
+
+        }
+        // press S
+        else if (keyCode === 83) {
+
+        }
+        // press E
+        else if (keyCode === 69) {
+
+        }       
+    }
+    // if we are on nodes layers    
+    else{
         // MOVE AROUND NODES
         // press Q
         if (keyCode === 81) {
@@ -192,26 +300,6 @@ function keyPressed() {
 
 ///////////////////////////////////////////// End of Keyboard Stuff ////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////// Sound Stuff ////////////////////////////////////////////////////////////////////////////////
-
-// give it an array of pizzaNode objects
-function playLayerBeat(pizzaNodesArr) {
-    this.pizzaNodesArr = pizzaNodesArr;
-    this.beatMap = [];
-    // loop through the array and creates a beat map
-    for (let i = 0; i < this.pizzaNodesArr.length; i++) {
-        let currentNodeBeat = this.pizzaNodesArr[i].clicked;
-        if (currentNodeBeat === true) {
-            this.beatMap.push('+');
-        } else {
-            this.beatMap.push('-');
-        }
-    }
-}
-
-////////////////////////////////////////////End of Sound Stuff ////////////////////////////////////////////////////////////////////
-
-
 ////////////////////////////////////////////////////// The Pizza Part /////////////////////////////////////////////////////////////////////////////
 
 function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
@@ -240,9 +328,18 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
         for (let i = 0; i < this.pizzaSlicesArr.length; i++) {
             this.pizzaSlicesArr[i].drawPizzaSlices();
         }
+
         // inner circle of pizza
         fill(140, 250, 170); // color light green
         ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);
+
+        push()
+        // show type text
+        fill(0);
+        noStroke();
+        text(currentInst.name, this.pizzaX-this.innerSize/3, this.pizzaY);
+        pop();
+
         // outer numbers
         this.pizzaSlicesArr[2].drawNum = true;
         pop();
@@ -323,8 +420,8 @@ function pizzaNode(slice, nodeX, nodeY) {
     this.nodeY = nodeY;
     this.nodeSize = 15;
     this.fillColor = 255;
-    this.clicked = false;
-    //console.log(this.clicked);
+    this.isActive = false;
+    //console.log(this.isActive);
 
     this.drawPizzaNode = function() {
         // draw the node!
@@ -333,20 +430,8 @@ function pizzaNode(slice, nodeX, nodeY) {
         fill(this.fillColor);
         ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
 
-        //function mouseClicked()
-        // check if node is clicked
-        if (this.clicked === false &&
-            mouseIsPressed &&
-            dist(mouseX, mouseY, this.nodeX, this.nodeY) <= this.nodeSize) {
-            this.clicked = true;
-        } 
-        else if (this.clicked === true &&
-            mouseIsPressed &&
-            dist(mouseX, mouseY, this.nodeX, this.nodeY) <= this.nodeSize) {
-            this.clicked = false;
-        }
-        // if node is clicked, change it to a different color
-        if (this.clicked === true) {
+        // if node is isActive, change it to a different color
+        if (this.isActive === true) {
             this.fillColor = 0;
         } 
         else {
