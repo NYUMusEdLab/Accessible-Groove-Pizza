@@ -11,7 +11,7 @@ function preload() {
     myVoice = new p5.Speech();
     myVoice.onLoad = voicesLoaded;
 
-    //synth = new Tone.Synth().toMaster();
+    
 }
 
 function setup() {
@@ -19,6 +19,8 @@ function setup() {
 
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
+
+    synth = new Tone.Synth();
 }
 
 function voicesLoaded() {
