@@ -191,7 +191,7 @@ let currentLayer = 2;
 let currentSlice = 1;
 let currentNode;
 
-function keyPressed() {
+function keyReleased() {
     // press space, play beats
     if (keyCode === 32) {
         startPlaying = !startPlaying;
