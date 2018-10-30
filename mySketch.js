@@ -105,7 +105,7 @@ function generateBeatsArr(numBeats){
 
 // change according to slider values
 function changeBPM(){
-    Tone.Transport.bpm.value = bpm_slider.value();
+    Tone.Transport.bpm.rampTo(bpm_slider.value(), 0.5);
 }
 
 function changeNumSlices(){
@@ -128,6 +128,7 @@ function changeNumSlices(){
             }
         }
     }, numBeatsArr, beatDur);
+    console.log(loop.length);
     loop.start();
 
     console.log(myPizza);
@@ -384,6 +385,7 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     // inter circle
     this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, 173, 80, 80)); // color dark peachy pink
 
+    // call this function when change the slice number or something
     this.updatePizza = function(){
         for (let i=0; i< this.pizzaSlicesArr.length; i++){
             this.pizzaSlicesArr[i].numSlices = this.numSlices;
