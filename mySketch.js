@@ -2,7 +2,32 @@
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 */
-let myPizza = new pizza(1920 / 2.5, 1080 / 3, 100, 1.5, 16);
+let bpm = 120;
+Tone.Transport.bpm.value = bpm;
+let beatDur = '16n'; // should be constant
+let numBeats = 16; // controls the pizza slices
+let numBeatsArr = generateBeatsArr(numBeats);
+
+// all the sliders to control pizza
+let bpm_slider;
+let numSlices_slider;
+
+// all the sound sources
+let kick = new Tone.Player('audio/Kick.wav').toMaster();
+let snare = new Tone.Player('audio/Snare.wav').toMaster();
+let hat = new Tone.Player('audio/HH.mp3').toMaster();
+
+let kick_beats; //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
+let snare_beats; //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
+let hat_beats; //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
+let beats; //= [kick_beats, snare_beats, hat_beats];
+
+// an arr to store all types of sounds
+let soundArr = [{name: 'Some Name', sounds: [kick, snare, hat]},
+                {name: 'Other Name', sounds: [hat, snare, kick]}]
+let currentInst = soundArr[0]; // default
+
+let myPizza = new pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats);
 
 let myVoice;
 
@@ -17,6 +42,16 @@ function setup() {
 
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
+
+    bpm_slider = createSlider(50, 180, bpm, 1);
+    bpm_slider.changed(changeBPM);
+    bpm_slider.position(150, windowHeight/2);
+    bpm_slider.style('width', '100px');
+
+    numSlices_slider = createSlider(2, 16, numBeats, 1);
+    numSlices_slider.changed(changeNumSlices);
+    numSlices_slider.position(150, windowHeight/2+50);
+    numSlices_slider.style('width', '100px');
 }
 
 function voicesLoaded() {
@@ -25,20 +60,6 @@ function voicesLoaded() {
 }
 
 /////////////////////////////////////////// Audio Stuff ////////////////////////////////////////////////////////////////////////////////
-let bpm = 120;
-Tone.Transport.bpm.value = bpm;
-let beatDur = '16n';
-
-// all the sound sources
-let kick = new Tone.Player('audio/Kick.wav').toMaster();
-let snare = new Tone.Player('audio/Snare.wav').toMaster();
-let hat = new Tone.Player('audio/HH.mp3').toMaster();
-
-// an arr to store all types of sounds
-let soundArr = [{name: 'Some Name', sounds: [kick, snare, hat]},
-                {name: 'Other Name', sounds: [hat, snare, kick]}]
-let currentInst = soundArr[0]; // default
-
 // give it an array of pizzaNode objects
 function mapBeats(pizzaNodesArr) {
     this.pizzaNodesArr = pizzaNodesArr;
@@ -51,24 +72,20 @@ function mapBeats(pizzaNodesArr) {
     return this.beatMap
 }
 
-let kick_beats; //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
-let snare_beats; //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
-let hat_beats; //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
-let beats; //= [kick_beats, snare_beats, hat_beats];
-
 let loop = new Tone.Sequence(function(time, col){
     let column = getBeatColumn(beats, col);
+    //console.log(col);
     for(let i = 0; i < column.length; i++) {
         if (column[i]) {
             playSound(currentInst.sounds[i], time);
         }
     }
-}, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], beatDur);
+}, numBeatsArr, beatDur);
 loop.start();
 
 function playSound(samp, time) {
     if (samp.loaded) {
-        samp.start(time, 0, beatDur);
+        samp.start(time, 0, '4n');
     }
 }
 
@@ -78,6 +95,43 @@ function getBeatColumn(arr, col) {
     });
 }
 
+function generateBeatsArr(numBeats){
+    let numBeatsArr = [];
+    for (let i=0; i<numBeats; i++){
+        numBeatsArr.push(i);
+    }
+    return numBeatsArr;
+}
+
+// change according to slider values
+function changeBPM(){
+    Tone.Transport.bpm.value = bpm_slider.value();
+}
+
+function changeNumSlices(){
+    myPizza.numSlices = numSlices_slider.value();
+    myPizza.updatePizza();
+    myPizza.drawPizza();
+
+    numBeats = numSlices_slider.value(); // controls the pizza slices
+    numBeatsArr = generateBeatsArr(numBeats);
+
+    // redo loop 
+    loop.stop();
+    loop.dispose();
+    loop = new Tone.Sequence(function(time, col){
+        let column = getBeatColumn(beats, col);
+        //console.log(col);
+        for(let i = 0; i < column.length; i++) {
+            if (column[i]) {
+                playSound(currentInst.sounds[i], time);
+            }
+        }
+    }, numBeatsArr, beatDur);
+    loop.start();
+
+    console.log(myPizza);
+}
 ////////////////////////////////////////////End of Audio Stuff ////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////// Draw Stuff ///////////////////////////////////////////////////////////////////////////////////////
@@ -85,14 +139,24 @@ function getBeatColumn(arr, col) {
 function draw() {
     // color light grey
     background(210);
-    nodeGrid(50, 100, 400, 200, 16);
+    //nodeGrid(50, 100, 400, 200, 16);
     myPizza.drawPizza();
+
+    // slider text
+    push();
+    noStroke();
+    fill(0);
+    text('BPM', 80, height/2+10);
+    text(bpm_slider.value(), 250, height/2+10);
+    text('Slices', 80, height/2+60);
+    text(numSlices_slider.value(), 250, height/2+60);
+    pop();   
 
     // indication on which layer and slice
     push();
     noStroke();
     fill(0);
-    text('Current Layer: ' + currentLayer + ' Current Slice: ' + currentSlice, width - width / 5, height / 5);
+    text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height/2+110);
     pop();
 
     // renew beats in draw
@@ -127,15 +191,15 @@ let currentSlice = 1;
 let currentNode;
 
 function keyPressed() {
-    console.log(beats);
-
     // press space, play beats
     if (keyCode === 32) {
         startPlaying = !startPlaying;
         if (startPlaying){
+            console.log('start playing');
             Tone.Transport.start();
         }
         else{
+            console.log('stop playing');
             Tone.Transport.stop();
         }
     }
@@ -151,7 +215,6 @@ function keyPressed() {
                     // if layer number match
                     if (currentLayer === myPizza.pizzaSlicesArr[i].layer) {
                         currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice - 1];
-                        console.log(currentNode);
                         // turn it around
                         currentNode.isActive = !currentNode.isActive;
                     }
@@ -321,6 +384,13 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     // inter circle
     this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, 173, 80, 80)); // color dark peachy pink
 
+    this.updatePizza = function(){
+        for (let i=0; i< this.pizzaSlicesArr.length; i++){
+            this.pizzaSlicesArr[i].numSlices = this.numSlices;
+            this.pizzaSlicesArr[i].updatePizzaSlices();
+            //this.pizzaSlicesArr[i].increaseAngle = 2 * Math.PI / this.pizzaSlicesArr[i].numSlices;
+        }
+    }
 
     this.drawPizza = function() {
         push();
@@ -363,8 +433,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
     // have an array to store all the pizza nodes to access later
     this.pizzaNodesArr = [];
 
-
-    // creating pizza nodes here
+    // this create the initial slices
     for (var i = 0; i < this.numSlices; i++) {
         let nodeAngle = this.startAngle + this.increaseAngle / 2;
         this.startAngle += this.increaseAngle;
@@ -373,6 +442,22 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
         let currentPizzaNode = new pizzaNode(i + 1, nodeX, nodeY);
         this.pizzaNodesArr.push(currentPizzaNode);
+    }
+
+    // call update when slices num is changed or something
+    this.updatePizzaSlices = function(){
+        this.increaseAngle = 2 * Math.PI / this.numSlices;
+
+        // updating pizza nodes here
+        for (var i = 0; i < this.numSlices; i++) {
+            let nodeAngle = this.startAngle + this.increaseAngle / 2;
+            this.startAngle += this.increaseAngle;
+            // update the nodes position!
+            let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
+            let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
+            this.pizzaNodesArr[i].nodeX = nodeX;
+            this.pizzaNodesArr[i].nodeY = nodeY;
+        }
     }
 
     this.drawPizzaSlices = function() {
@@ -387,7 +472,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         stroke(200);
         fill(r, g, b);
 
-        // draw 16 slices
+        // draw num slices
         for (var i = 0; i < this.numSlices; i++) {
             arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle + this.increaseAngle, PIE);
 
