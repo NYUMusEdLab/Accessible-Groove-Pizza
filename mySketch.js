@@ -116,7 +116,7 @@ function changeNumSlices(){
     numBeats = numSlices_slider.value(); // controls the pizza slices
     numBeatsArr = generateBeatsArr(numBeats);
 
-    // redo loop 
+    // redo loop
     loop.stop();
     loop.dispose();
     loop = new Tone.Sequence(function(time, col){
@@ -140,7 +140,7 @@ function changeNumSlices(){
 function draw() {
     // color light grey
     background(210);
-    //nodeGrid(50, 100, 400, 200, 16);
+    // nodeGrid(50, 100, 400, 200, 16);
     myPizza.drawPizza();
 
     // slider text
@@ -151,7 +151,7 @@ function draw() {
     text(bpm_slider.value(), 250, height/2+10);
     text('Slices', 80, height/2+60);
     text(numSlices_slider.value(), 250, height/2+60);
-    pop();   
+    pop();
 
     // indication on which layer and slice
     push();
@@ -177,8 +177,8 @@ function mouseReleased(){
         for (let j=0; j<myPizza.pizzaSlicesArr[i].pizzaNodesArr.length; j++){
             let currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
             if (dist(mouseX, mouseY, currentNode.nodeX, currentNode.nodeY) <= currentNode.nodeSize) {
-                currentNode.isActive = !currentNode.isActive;
-            } 
+                currentNode.changeState();
+            }
         }
     }
 }
@@ -274,9 +274,9 @@ function keyReleased() {
         // press E
         else if (keyCode === 69) {
 
-        }       
+        }
     }
-    // if we are on nodes layers    
+    // if we are on nodes layers
     else{
         // MOVE AROUND NODES
         // press Q
@@ -506,7 +506,10 @@ function pizzaNode(slice, nodeX, nodeY) {
     this.nodeX = nodeX;
     this.nodeY = nodeY;
     this.nodeSize = 15;
-    this.fillColor = 255;
+    this.fillColor = {
+      true: 0,
+      false: 255
+    };
     this.isActive = false;
     //console.log(this.isActive);
 
@@ -514,18 +517,14 @@ function pizzaNode(slice, nodeX, nodeY) {
         // draw the node!
         push();
         noStroke();
-        fill(this.fillColor);
+        fill(this.fillColor[this.isActive]);
         ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
 
-        // if node is isActive, change it to a different color
-        if (this.isActive === true) {
-            this.fillColor = 0;
-        } 
-        else {
-            this.fillColor = 255;
-        }
-
         pop();
+    }
+
+    this.changeState = function() {
+      this.isActive = !this.isActive;
     }
 }
 
