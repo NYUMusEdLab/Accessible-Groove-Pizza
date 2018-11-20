@@ -2,6 +2,14 @@
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 */
+
+// todo
+// Create color objects
+// Look at inheritance and how the various classes are declared
+// Break Pizza into its own class
+// Consider changing how beats get added
+// Refactor when possible
+
 let bpm = 120;
 Tone.Transport.bpm.value = bpm;
 let beatDur = '16n'; // should be constant
@@ -17,13 +25,13 @@ let kick = new Tone.Player('audio/Kick.wav').toMaster();
 let snare = new Tone.Player('audio/Snare.wav').toMaster();
 let hat = new Tone.Player('audio/HH.mp3').toMaster();
 
-let kick_beats; //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
-let snare_beats; //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
-let hat_beats; //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
-let beats; //= [kick_beats, snare_beats, hat_beats];
+let kick_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
+let snare_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
+let hat_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
+let beats = [kick_beats, snare_beats, hat_beats];
 
 // an arr to store all types of sounds
-let soundArr = [{name: 'Some Name', sounds: [kick, snare, hat]},
+let soundArr = [{name: 'Some Name', sounds: [hat, snare, kick]},
                 {name: 'Other Name', sounds: [hat, snare, kick]}]
 let currentInst = soundArr[0]; // default
 
@@ -60,7 +68,7 @@ function voicesLoaded() {
 }
 
 /////////////////////////////////////////// Audio Stuff ////////////////////////////////////////////////////////////////////////////////
-// give it an array of pizzaNode objects
+// This gets called throughout the draw loop
 function mapBeats(pizzaNodesArr) {
     this.pizzaNodesArr = pizzaNodesArr;
     this.beatMap = [];
@@ -159,12 +167,6 @@ function draw() {
     fill(0);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height/2+110);
     pop();
-
-    // renew beats in draw
-    kick_beats = mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
-    snare_beats = mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
-    hat_beats = mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
-    beats = [kick_beats, snare_beats, hat_beats];
 }
 
 ///////////////////////////////// End of Draw Stuff ///////////////////////////////////////////////////////////////////////////////////
@@ -173,11 +175,16 @@ function draw() {
 // change the activeness of each node
 function mouseReleased(){
     // loop through all nodes
+    myPizza.clickPizza(mouseX, mouseY);
     for (let i=0; i<myPizza.pizzaSlicesArr.length;i++){
         for (let j=0; j<myPizza.pizzaSlicesArr[i].pizzaNodesArr.length; j++){
             let currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
             if (dist(mouseX, mouseY, currentNode.nodeX, currentNode.nodeY) <= currentNode.nodeSize) {
-                currentNode.changeState();
+                let positionAndState = currentNode.changeState();
+                let layerVal = positionAndState[0] - 2;
+                let sliceVal = positionAndState[1] - 1;
+                let stateVal = positionAndState[2];
+                beats[layerVal][sliceVal] = stateVal;
             }
         }
     }
@@ -217,7 +224,7 @@ function keyReleased() {
                     if (currentLayer === myPizza.pizzaSlicesArr[i].layer) {
                         currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice - 1];
                         // turn it around
-                        currentNode.isActive = !currentNode.isActive;
+                        currentNode.changeState();
                     }
                 }
                 if (currentNode.isActive === true) {
@@ -417,6 +424,23 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
         pop();
     }
 
+    // Function that gets called whenever the pizza has been clicked on
+    // Check if a node has been clicked on
+    // If true - update the node and return its array indices
+    this.clickPizza = function(clickX, clickY) {
+        console.log(this.determineLayer(clickX, clickY));
+    }
+
+    this.determineLayer = function(clickX, clickY) {
+        let clickDistance = dist(clickX, clickY, this.pizzaX, this.pizzaY);
+        let distanceRatio = (clickDistance - (this.innerSize / 2)) / (this.sizeRatio * (this.innerSize / 2));
+        if (distanceRatio > 3) {return false;} // Assuming pizza has 3 layers
+        else {return floor(distanceRatio + 2);}
+    }
+
+    this.changeCenter = function() {
+        console.log('Center was clicked')
+    }
 }
 
 function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
@@ -442,7 +466,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         // create the nodes on each slice!
         let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
         let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
-        let currentPizzaNode = new pizzaNode(i + 1, nodeX, nodeY);
+        let currentPizzaNode = new pizzaNode(i + 1, this.layer, nodeX, nodeY);
         this.pizzaNodesArr.push(currentPizzaNode);
     }
 
@@ -472,7 +496,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         angleMode(RADIANS);
         // stroke color light grey
         stroke(200);
-        fill(r, g, b);
+        fill(r, g, b); // this should be this.r, this.g, this.b?
 
         // draw num slices
         for (var i = 0; i < this.numSlices; i++) {
@@ -487,7 +511,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
                 fill(0);
                 let textX = this.sliceX + ((this.sliceSize + 50) * Math.cos(nodeAngle));
                 let textY = this.sliceY + ((this.sliceSize + 50) * Math.sin(nodeAngle));
-                text(this.pizzaNodesArr[i].slice, textX, textY);
+                text(this.pizzaNodesArr[i].slice, textX, textY); // Clean this up
                 pop();
             }
             this.startAngle += this.increaseAngle;
@@ -501,10 +525,13 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
 // this function would probably draw shapes
 function pizzaNodes() {}
 
-function pizzaNode(slice, nodeX, nodeY) {
+function pizzaNode(slice, layer, nodeX, nodeY) {
     this.slice = slice;
+    this.layer = layer;
+
     this.nodeX = nodeX;
     this.nodeY = nodeY;
+
     this.nodeSize = 15;
     this.fillColor = {
       true: 0,
@@ -525,6 +552,7 @@ function pizzaNode(slice, nodeX, nodeY) {
 
     this.changeState = function() {
       this.isActive = !this.isActive;
+      return ([this.layer, this.slice, this.isActive]);
     }
 }
 
