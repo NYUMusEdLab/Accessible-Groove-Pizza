@@ -4,10 +4,10 @@ http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
 */
 
 // todo
+// Figure out cleaner way of converting layers to beat array indices
 // Create color objects
 // Look at inheritance and how the various classes are declared
 // Break Pizza into its own class
-// Consider changing how beats get added
 // Refactor when possible
 
 let bpm = 120;
@@ -174,20 +174,18 @@ function draw() {
 //////////////////////////////////////////// Mouse Stuff /////////////////////////////////////////////////////////////////////////////
 // change the activeness of each node
 function mouseReleased(){
-    // loop through all nodes
-    myPizza.clickPizza(mouseX, mouseY);
-    for (let i=0; i<myPizza.pizzaSlicesArr.length;i++){
-        for (let j=0; j<myPizza.pizzaSlicesArr[i].pizzaNodesArr.length; j++){
-            let currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
-            if (dist(mouseX, mouseY, currentNode.nodeX, currentNode.nodeY) <= currentNode.nodeSize) {
-                let positionAndState = currentNode.changeState();
-                let layerVal = positionAndState[0] - 2;
-                let sliceVal = positionAndState[1] - 1;
-                let stateVal = positionAndState[2];
-                beats[layerVal][sliceVal] = stateVal;
-            }
-        }
-    }
+    // Click on the pizza
+    // If the function returns false, the user did not click on a node
+    // Otherwise, update the beatsArray with the node that change
+    let positionAndState = myPizza.clickPizza(mouseX, mouseY);
+    if (!positionAndState) {return false;} // If
+
+    let layerVal = positionAndState[0] - 2;
+    let sliceVal = positionAndState[1] - 1;
+    let stateVal = positionAndState[2];
+    beats[layerVal][sliceVal] = stateVal;
+
+    console.log('here');
 }
 //////////////////////////////////////////// End of Mouse Stuff /////////////////////////////////////////////////////////////////////
 
@@ -224,7 +222,11 @@ function keyReleased() {
                     if (currentLayer === myPizza.pizzaSlicesArr[i].layer) {
                         currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice - 1];
                         // turn it around
-                        currentNode.changeState();
+                        let positionAndState = currentNode.changeState();
+                        let layerVal = positionAndState[0] - 2;
+                        let sliceVal = positionAndState[1] - 1;
+                        let stateVal = positionAndState[2];
+                        beats[layerVal][sliceVal] = stateVal;
                     }
                 }
                 if (currentNode.isActive === true) {
@@ -428,9 +430,19 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     // Check if a node has been clicked on
     // If true - update the node and return its array indices
     this.clickPizza = function(clickX, clickY) {
-        console.log(this.determineLayer(clickX, clickY));
+        let layerVal = this.determineLayer(clickX, clickY);
+        if (!layerVal) {return false;}
+        if (layerVal == 1) {
+            this.changeCenter();
+            return false;
+        }
+
+        let layerIndex = 2 - (layerVal - 2);
+        return (this.pizzaSlicesArr[layerIndex].clickSlice(clickX, clickY));
     }
 
+    // Returns the layer that was clicked on
+    // If the mouse was outside of the pizza - returns false
     this.determineLayer = function(clickX, clickY) {
         let clickDistance = dist(clickX, clickY, this.pizzaX, this.pizzaY);
         let distanceRatio = (clickDistance - (this.innerSize / 2)) / (this.sizeRatio * (this.innerSize / 2));
@@ -439,7 +451,8 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     }
 
     this.changeCenter = function() {
-        console.log('Center was clicked')
+        console.log('Center was clicked');
+        return false;
     }
 }
 
@@ -519,6 +532,16 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
             this.pizzaNodesArr[i].drawPizzaNode();
         }
         pop();
+    }
+
+    this.clickSlice = function(clickX, clickY) {
+        for (let i = 0; i < this.pizzaNodesArr.length; i++) {
+            let currentNode = this.pizzaNodesArr[i];
+            if (dist(clickX, clickY, currentNode.nodeX, currentNode.nodeY) < currentNode.nodeSize) {
+                return currentNode.changeState();
+            }
+        }
+        return false;
     }
 }
 
