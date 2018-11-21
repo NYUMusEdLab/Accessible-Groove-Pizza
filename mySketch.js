@@ -14,7 +14,7 @@ let bpm = 120;
 Tone.Transport.bpm.value = bpm;
 let beatDur = '16n'; // should be constant
 let numBeats = 16; // controls the pizza slices
-let numBeatsArr = generateBeatsArr(numBeats);
+let numBeatsArr = [...Array(numBeats).keys()];
 
 // all the sliders to control pizza
 let bpm_slider;
@@ -25,9 +25,9 @@ let kick = new Tone.Player('audio/Kick.wav').toMaster();
 let snare = new Tone.Player('audio/Snare.wav').toMaster();
 let hat = new Tone.Player('audio/HH.mp3').toMaster();
 
-let kick_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[0].pizzaNodesArr);
-let snare_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[1].pizzaNodesArr);
-let hat_beats = new Array(numBeats).fill(0); //= mapBeats(myPizza.pizzaSlicesArr[2].pizzaNodesArr);
+let kick_beats = new Array(numBeats).fill(0);
+let snare_beats = new Array(numBeats).fill(0);
+let hat_beats = new Array(numBeats).fill(0);
 let beats = [kick_beats, snare_beats, hat_beats];
 
 // an arr to store all types of sounds
@@ -68,18 +68,6 @@ function voicesLoaded() {
 }
 
 /////////////////////////////////////////// Audio Stuff ////////////////////////////////////////////////////////////////////////////////
-// This gets called throughout the draw loop
-function mapBeats(pizzaNodesArr) {
-    this.pizzaNodesArr = pizzaNodesArr;
-    this.beatMap = [];
-    // loop through the array and creates a beat map
-    for (let i = 0; i < this.pizzaNodesArr.length; i++) {
-        let currentNodeBeat = this.pizzaNodesArr[i].isActive;
-        this.beatMap.push(currentNodeBeat);
-    }
-    return this.beatMap
-}
-
 let loop = new Tone.Sequence(function(time, col){
     let column = getBeatColumn(beats, col);
     //console.log(col);
@@ -103,14 +91,6 @@ function getBeatColumn(arr, col) {
     });
 }
 
-function generateBeatsArr(numBeats){
-    let numBeatsArr = [];
-    for (let i=0; i<numBeats; i++){
-        numBeatsArr.push(i);
-    }
-    return numBeatsArr;
-}
-
 // change according to slider values
 function changeBPM(){
     Tone.Transport.bpm.rampTo(bpm_slider.value(), 0.5);
@@ -122,7 +102,7 @@ function changeNumSlices(){
     myPizza.drawPizza();
 
     numBeats = numSlices_slider.value(); // controls the pizza slices
-    numBeatsArr = generateBeatsArr(numBeats);
+    numBeatsArr = [...Array(numBeats).keys()] // array from 0 to n
 
     // redo loop
     loop.stop();
@@ -178,20 +158,18 @@ function mouseReleased(){
     // If the function returns false, the user did not click on a node
     // Otherwise, update the beatsArray with the node that change
     let positionAndState = myPizza.clickPizza(mouseX, mouseY);
-    if (!positionAndState) {return false;} // If
+    if (!positionAndState) {return false;} // If clicking did not do anything
 
-    let layerVal = positionAndState[0] - 2;
-    let sliceVal = positionAndState[1] - 1;
+    let layerVal = positionAndState[0] - 2; // layers range from 2 to 4
+    let sliceVal = positionAndState[1] - 1; // slices begin at 1
     let stateVal = positionAndState[2];
     beats[layerVal][sliceVal] = stateVal;
-
-    console.log('here');
 }
 //////////////////////////////////////////// End of Mouse Stuff /////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////// Keyboard Stuff //////////////////////////////////////////////////////////////////
 
-let startPlaying = false;
+let isPlaying = false; // These should be defined at the top...
 let currentLayer = 2;
 let currentSlice = 1;
 let currentNode;
@@ -199,14 +177,15 @@ let currentNode;
 function keyReleased() {
     // press space, play beats
     if (keyCode === 32) {
-        startPlaying = !startPlaying;
-        if (startPlaying){
+        if (!isPlaying){
             console.log('start playing');
             Tone.Transport.start();
+            isPlaying = true;
         }
         else{
             console.log('stop playing');
             Tone.Transport.stop();
+            isPlaying = false;
         }
     }
 
@@ -229,7 +208,7 @@ function keyReleased() {
                         beats[layerVal][sliceVal] = stateVal;
                     }
                 }
-                if (currentNode.isActive === true) {
+                if (currentNode.isActive) {
                     myVoice.speak('Beat on.');
                 } else {
                     myVoice.speak('Beat off.')
@@ -386,13 +365,20 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     // have an array to store all the pizza slices to access later
     this.pizzaSlicesArr = [];
 
+    // Move to the top at some point
+    let pizzaColors = {
+        'peachy-pink': {r: 250, g: 140, b: 141},
+        'green': {r: 62, g: 173, b: 93},
+        'dark-peachy-pink': {r: 173, g: 80, b: 80}
+    };
+
     // draw the pizza!
     // outer circle
-    this.pizzaSlicesArr.push(new pizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 3, 250, 140, 141)); // color peachy pink
+    this.pizzaSlicesArr.push(new pizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 3, pizzaColors['peachy-pink']));
     // middle circle
-    this.pizzaSlicesArr.push(new pizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 2, 62, 173, 93)); // color green
-    // inter circle
-    this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, 173, 80, 80)); // color dark peachy pink
+    this.pizzaSlicesArr.push(new pizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 2, pizzaColors['green']));
+    // inner circle
+    this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, pizzaColors['dark-peachy-pink']));
 
     // call this function when change the slice number or something
     this.updatePizza = function(){
@@ -406,9 +392,9 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     this.drawPizza = function() {
         push();
         // draw the slices of pizza
-        for (let i = 0; i < this.pizzaSlicesArr.length; i++) {
-            this.pizzaSlicesArr[i].drawPizzaSlices();
-        }
+        this.pizzaSlicesArr.forEach(function(slice) {
+            slice.drawPizzaSlices();
+        });
 
         // inner circle of pizza
         fill(140, 250, 170); // color light green
@@ -456,15 +442,16 @@ function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
     }
 }
 
-function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
+function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     this.layer = layer;
     this.numSlices = numSlices;
+
     this.sliceX = sliceX;
     this.sliceY = sliceY;
+
     this.sliceSize = sliceSize;
-    this.r = r;
-    this.g = g;
-    this.b = b;
+
+    this.color = color;
     this.drawNum = false; // set to true on outer layer
     // to draw
     this.startAngle = 0;
@@ -491,6 +478,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         for (var i = 0; i < this.numSlices; i++) {
             let nodeAngle = this.startAngle + this.increaseAngle / 2;
             this.startAngle += this.increaseAngle;
+
             // update the nodes position!
             let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
             let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
@@ -509,7 +497,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         angleMode(RADIANS);
         // stroke color light grey
         stroke(200);
-        fill(r, g, b); // this should be this.r, this.g, this.b?
+        fill(this.color.r, this.color.g, this.color.b);
 
         // draw num slices
         for (var i = 0; i < this.numSlices; i++) {
@@ -524,7 +512,7 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
                 fill(0);
                 let textX = this.sliceX + ((this.sliceSize + 50) * Math.cos(nodeAngle));
                 let textY = this.sliceY + ((this.sliceSize + 50) * Math.sin(nodeAngle));
-                text(this.pizzaNodesArr[i].slice, textX, textY); // Clean this up
+                text(this.pizzaNodesArr[i].slice, textX, textY);
                 pop();
             }
             this.startAngle += this.increaseAngle;
@@ -534,6 +522,9 @@ function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, r, g, b) {
         pop();
     }
 
+    // If a node is clicked, it will call its chageState function and return
+    // the results
+    // Otherwise, it will return false
     this.clickSlice = function(clickX, clickY) {
         for (let i = 0; i < this.pizzaNodesArr.length; i++) {
             let currentNode = this.pizzaNodesArr[i];
@@ -561,7 +552,6 @@ function pizzaNode(slice, layer, nodeX, nodeY) {
       false: 255
     };
     this.isActive = false;
-    //console.log(this.isActive);
 
     this.drawPizzaNode = function() {
         // draw the node!
@@ -573,6 +563,9 @@ function pizzaNode(slice, layer, nodeX, nodeY) {
         pop();
     }
 
+    // Swaps the isActive variable of the node
+    // Returns the node's layer, slice, and new state of isActive - this is
+    // used for updating the beats array
     this.changeState = function() {
       this.isActive = !this.isActive;
       return ([this.layer, this.slice, this.isActive]);
