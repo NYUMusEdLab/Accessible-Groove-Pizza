@@ -1,13 +1,6 @@
-/*
-Things to consider with colors:
-http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
-*/
-
 // todo
 // Figure out cleaner way of converting layers to beat array indices
-// Create color objects
 // Look at inheritance and how the various classes are declared
-// Break Pizza into its own class
 // Refactor when possible
 
 let bpm = 120;
@@ -35,8 +28,10 @@ let soundArr = [{name: 'Some Name', sounds: [hat, snare, kick]},
                 {name: 'Other Name', sounds: [hat, snare, kick]}]
 let currentInst = soundArr[0]; // default
 
-let myPizza = new pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats);
+// Visuals
+let colorPalette = pinkAndGreen;
 
+let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;
 
 function preload() {
@@ -127,7 +122,7 @@ function changeNumSlices(){
 
 function draw() {
     // color light grey
-    background(210);
+    background(colorPalette.background.r, colorPalette.background.g, colorPalette.background.b);
     // nodeGrid(50, 100, 400, 200, 16);
     myPizza.drawPizza();
 
@@ -147,6 +142,11 @@ function draw() {
     fill(0);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height/2+110);
     pop();
+}
+
+function updateColorPalette(newColorPalette) {
+    colorPalette = newColorPalette;
+    myPizza.updateColor(colorPalette);
 }
 
 ///////////////////////////////// End of Draw Stuff ///////////////////////////////////////////////////////////////////////////////////
@@ -354,223 +354,7 @@ function keyReleased() {
 
 ////////////////////////////////////////////////////// The Pizza Part /////////////////////////////////////////////////////////////////////////////
 
-function pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices) {
-    this.innerSize = innerSize; // radius in pixels of the inner circle
-    this.sizeRatio = sizeRatio; // ratio for increasing the size of circles
-    // position of center of pizza
-    this.pizzaX = pizzaX;
-    this.pizzaY = pizzaY;
-    this.numSlices = numSlices;
 
-    // have an array to store all the pizza slices to access later
-    this.pizzaSlicesArr = [];
-
-    // Move to the top at some point
-    let pizzaColors = {
-        'peachy-pink': {r: 250, g: 140, b: 141},
-        'green': {r: 62, g: 173, b: 93},
-        'dark-peachy-pink': {r: 173, g: 80, b: 80}
-    };
-
-    // draw the pizza!
-    // outer circle
-    this.pizzaSlicesArr.push(new pizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 3, pizzaColors['peachy-pink']));
-    // middle circle
-    this.pizzaSlicesArr.push(new pizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 2, pizzaColors['green']));
-    // inner circle
-    this.pizzaSlicesArr.push(new pizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, pizzaColors['dark-peachy-pink']));
-
-    // call this function when change the slice number or something
-    this.updatePizza = function(){
-        for (let i=0; i< this.pizzaSlicesArr.length; i++){
-            this.pizzaSlicesArr[i].numSlices = this.numSlices;
-            this.pizzaSlicesArr[i].updatePizzaSlices();
-            //this.pizzaSlicesArr[i].increaseAngle = 2 * Math.PI / this.pizzaSlicesArr[i].numSlices;
-        }
-    }
-
-    this.drawPizza = function() {
-        push();
-        // draw the slices of pizza
-        this.pizzaSlicesArr.forEach(function(slice) {
-            slice.drawPizzaSlices();
-        });
-
-        // inner circle of pizza
-        fill(140, 250, 170); // color light green
-        ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);
-
-        push()
-        // show type text
-        fill(0);
-        noStroke();
-        text(currentInst.name, this.pizzaX-this.innerSize/3, this.pizzaY);
-        pop();
-
-        // outer numbers
-        this.pizzaSlicesArr[2].drawNum = true;
-        pop();
-    }
-
-    // Function that gets called whenever the pizza has been clicked on
-    // Check if a node has been clicked on
-    // If true - update the node and return its array indices
-    this.clickPizza = function(clickX, clickY) {
-        let layerVal = this.determineLayer(clickX, clickY);
-        if (!layerVal) {return false;}
-        if (layerVal == 1) {
-            this.changeCenter();
-            return false;
-        }
-
-        let layerIndex = 2 - (layerVal - 2);
-        return (this.pizzaSlicesArr[layerIndex].clickSlice(clickX, clickY));
-    }
-
-    // Returns the layer that was clicked on
-    // If the mouse was outside of the pizza - returns false
-    this.determineLayer = function(clickX, clickY) {
-        let clickDistance = dist(clickX, clickY, this.pizzaX, this.pizzaY);
-        let distanceRatio = (clickDistance - (this.innerSize / 2)) / (this.sizeRatio * (this.innerSize / 2));
-        if (distanceRatio > 3) {return false;} // Assuming pizza has 3 layers
-        else {return floor(distanceRatio + 2);}
-    }
-
-    this.changeCenter = function() {
-        console.log('Center was clicked');
-        return false;
-    }
-}
-
-function pizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
-    this.layer = layer;
-    this.numSlices = numSlices;
-
-    this.sliceX = sliceX;
-    this.sliceY = sliceY;
-
-    this.sliceSize = sliceSize;
-
-    this.color = color;
-    this.drawNum = false; // set to true on outer layer
-    // to draw
-    this.startAngle = 0;
-    this.increaseAngle = 2 * Math.PI / this.numSlices; // 22.5 if 16 slices
-    // have an array to store all the pizza nodes to access later
-    this.pizzaNodesArr = [];
-
-    // this create the initial slices
-    for (var i = 0; i < this.numSlices; i++) {
-        let nodeAngle = this.startAngle + this.increaseAngle / 2;
-        this.startAngle += this.increaseAngle;
-        // create the nodes on each slice!
-        let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
-        let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
-        let currentPizzaNode = new pizzaNode(i + 1, this.layer, nodeX, nodeY);
-        this.pizzaNodesArr.push(currentPizzaNode);
-    }
-
-    // call update when slices num is changed or something
-    this.updatePizzaSlices = function(){
-        this.increaseAngle = 2 * Math.PI / this.numSlices;
-
-        // updating pizza nodes here
-        for (var i = 0; i < this.numSlices; i++) {
-            let nodeAngle = this.startAngle + this.increaseAngle / 2;
-            this.startAngle += this.increaseAngle;
-
-            // update the nodes position!
-            let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
-            let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
-            this.pizzaNodesArr[i].nodeX = nodeX;
-            this.pizzaNodesArr[i].nodeY = nodeY;
-        }
-    }
-
-    this.drawPizzaSlices = function() {
-        // reset angles
-        this.startAngle = 0;
-        this.increaseAngle = (2 * Math.PI / this.numSlices); // 2PI/16 slices
-
-        push();
-        // change angle mode to RADIANS!
-        angleMode(RADIANS);
-        // stroke color light grey
-        stroke(200);
-        fill(this.color.r, this.color.g, this.color.b);
-
-        // draw num slices
-        for (var i = 0; i < this.numSlices; i++) {
-            arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle + this.increaseAngle, PIE);
-
-            let nodeAngle = this.startAngle + this.increaseAngle / 2;
-
-            // if it's layer 4 and we draw the numbers around
-            if (this.drawNum === true) {
-                push();
-                noStroke();
-                fill(0);
-                let textX = this.sliceX + ((this.sliceSize + 50) * Math.cos(nodeAngle));
-                let textY = this.sliceY + ((this.sliceSize + 50) * Math.sin(nodeAngle));
-                text(this.pizzaNodesArr[i].slice, textX, textY);
-                pop();
-            }
-            this.startAngle += this.increaseAngle;
-            // draw the nodes on each slice!
-            this.pizzaNodesArr[i].drawPizzaNode();
-        }
-        pop();
-    }
-
-    // If a node is clicked, it will call its chageState function and return
-    // the results
-    // Otherwise, it will return false
-    this.clickSlice = function(clickX, clickY) {
-        for (let i = 0; i < this.pizzaNodesArr.length; i++) {
-            let currentNode = this.pizzaNodesArr[i];
-            if (dist(clickX, clickY, currentNode.nodeX, currentNode.nodeY) < currentNode.nodeSize) {
-                return currentNode.changeState();
-            }
-        }
-        return false;
-    }
-}
-
-// this function would probably draw shapes
-function pizzaNodes() {}
-
-function pizzaNode(slice, layer, nodeX, nodeY) {
-    this.slice = slice;
-    this.layer = layer;
-
-    this.nodeX = nodeX;
-    this.nodeY = nodeY;
-
-    this.nodeSize = 15;
-    this.fillColor = {
-      true: 0,
-      false: 255
-    };
-    this.isActive = false;
-
-    this.drawPizzaNode = function() {
-        // draw the node!
-        push();
-        noStroke();
-        fill(this.fillColor[this.isActive]);
-        ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
-
-        pop();
-    }
-
-    // Swaps the isActive variable of the node
-    // Returns the node's layer, slice, and new state of isActive - this is
-    // used for updating the beats array
-    this.changeState = function() {
-      this.isActive = !this.isActive;
-      return ([this.layer, this.slice, this.isActive]);
-    }
-}
 
 //////////////////////////////////////////////////////////////////// End of Pizza Part ///////////////////////////////////////////////////////////////////
 
