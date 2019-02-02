@@ -14,9 +14,14 @@ let bpm_slider;
 let numSlices_slider;
 
 // all the sound sources
-let kick = new Tone.Player('audio/Kick.wav').toMaster();
-let snare = new Tone.Player('audio/Snare.wav').toMaster();
-let hat = new Tone.Player('audio/HH.mp3').toMaster();
+// TODO - Automate how these are loaded
+let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
+let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
+let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
+
+let kickReal = new Tone.Player('audio/drumset/Kick.wav').toMaster();
+let snareReal = new Tone.Player('audio/drumset/Snare.wav').toMaster();
+let hatReal = new Tone.Player('audio/drumset/HH.wav').toMaster();
 
 let kick_beats = new Array(numBeats).fill(0);
 let snare_beats = new Array(numBeats).fill(0);
@@ -24,8 +29,12 @@ let hat_beats = new Array(numBeats).fill(0);
 let beats = [kick_beats, snare_beats, hat_beats];
 
 // an arr to store all types of sounds
-let soundArr = [{name: 'Some Name', sounds: [hat, snare, kick]},
-                {name: 'Other Name', sounds: [hat, snare, kick]}]
+let soundArr = [{name: '16 Bit',
+                 sounds: [hat16, snare16, kick16],
+                 instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']},
+                {name: 'Drum Set',
+                 sounds: [hatReal, snareReal, kickReal],
+                 instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']}];
 let currentInst = soundArr[0]; // default
 
 // Visuals
@@ -220,9 +229,9 @@ function keyReleased() {
                     }
                 }
                 if (currentNode.isActive) {
-                    myVoice.speak('Beat on.');
+                    myVoice.speak('On.');
                 } else {
-                    myVoice.speak('Beat off.')
+                    myVoice.speak('Off.')
                 }
             }
         }
@@ -232,22 +241,22 @@ function keyReleased() {
     // press 1
     if (keyCode === 49) {
         currentLayer = 1;
-        myVoice.speak('Layer 1.');
+        myVoice.speak('Instrument.');
     }
     // press 2
     else if (keyCode === 50) {
         currentLayer = 2;
-        myVoice.speak('Layer 2.');
+        myVoice.speak(currentInst.instrumentNames[0]);
     }
     // press 3
     else if (keyCode === 51) {
         currentLayer = 3;
-        myVoice.speak('Layer 3.');
+        myVoice.speak(currentInst.instrumentNames[1]);
     }
     // press 4
     else if (keyCode === 52) {
         currentLayer = 4;
-        myVoice.speak('Layer 4.');
+        myVoice.speak(currentInst.instrumentNames[2]);
     }
 
     // if we are on instrument layer, qawse controls which type of music to play

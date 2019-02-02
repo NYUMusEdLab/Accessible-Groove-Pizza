@@ -99,8 +99,9 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     this.color = color;
     this.drawNum = false; // set to true on outer layer
     // to draw
-    this.startAngle = 0;
-    this.increaseAngle = 2 * Math.PI / this.numSlices; // 22.5 if 16 slices
+    this.increaseAngle = 2 * Math.PI / this.numSlices;
+    // this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
+    this.startAngle = 0; // 22.5 if 16 slices
     // have an array to store all the pizza nodes to access later
     this.pizzaNodesArr = [];
 
@@ -134,12 +135,14 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
 
     this.drawPizzaSlices = function() {
         // reset angles
+        // this.increaseAngle = 2 * Math.PI / this.numSlices;
+        //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
         this.startAngle = 0;
-        this.increaseAngle = (2 * Math.PI / this.numSlices); // 2PI/16 slices
 
         push();
         // change angle mode to RADIANS!
         angleMode(RADIANS);
+
         // stroke color light grey
         stroke(200);
         fill(this.color.r, this.color.g, this.color.b);
