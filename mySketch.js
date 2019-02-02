@@ -29,7 +29,7 @@ let soundArr = [{name: 'Some Name', sounds: [hat, snare, kick]},
 let currentInst = soundArr[0]; // default
 
 // Visuals
-let colorPalette = pinkAndGreen;
+let colorPalette = colors1;
 
 let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;
@@ -126,10 +126,14 @@ function draw() {
     // nodeGrid(50, 100, 400, 200, 16);
     myPizza.drawPizza();
 
+
+
     // slider text
     push();
     noStroke();
     fill(0);
+    textStyle(BOLD);
+    textSize(18);
     text('BPM', 80, height/2+10);
     text(bpm_slider.value(), 250, height/2+10);
     text('Slices', 80, height/2+60);
@@ -138,6 +142,8 @@ function draw() {
 
     // indication on which layer and slice
     push();
+    textStyle(BOLD);
+    textSize(18);
     noStroke();
     fill(0);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height/2+110);
@@ -147,6 +153,7 @@ function draw() {
 function updateColorPalette(newColorPalette) {
     colorPalette = newColorPalette;
     myPizza.updateColor(colorPalette);
+    console.log(colorPalette)
 }
 
 ///////////////////////////////// End of Draw Stuff ///////////////////////////////////////////////////////////////////////////////////
@@ -243,11 +250,13 @@ function keyReleased() {
     if (currentLayer === 1){
         // press Q
         if (keyCode === 81) {
+            updateColorPalette(colors1);
             currentInst = soundArr[0];
             myVoice.speak(currentInst.name);
         }
         // press A
         else if (keyCode === 65) {
+            updateColorPalette(colors2);
             currentInst = soundArr[1];
             myVoice.speak(currentInst.name);
         }

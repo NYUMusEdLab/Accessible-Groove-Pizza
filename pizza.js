@@ -183,7 +183,7 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     this.updateColor = function(colorPalette) {
         if (this.layer == 4) { this.color = colorPalette.outerRing; }
         else if (this.layer == 3) { this.color = colorPalette.middleRing; }
-        else if (this.layer == 2) { this.color = colorPalette.middleRing; }
+        else if (this.layer == 2) { this.color = colorPalette.innerRing; }
 
         this.pizzaNodesArr.forEach(function(node) {
             node.updateColor(colorPalette);
