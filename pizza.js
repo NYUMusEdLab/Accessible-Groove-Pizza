@@ -100,8 +100,9 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     this.drawNum = false; // set to true on outer layer
     // to draw
     this.increaseAngle = 2 * Math.PI / this.numSlices;
-    // this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
-    this.startAngle = 0; // 22.5 if 16 slices
+    //this.startAngle = 0; // 22.5 if 16 slices
+    //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
+    this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
     // have an array to store all the pizza nodes to access later
     this.pizzaNodesArr = [];
 
@@ -118,6 +119,7 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
 
     // call update when slices num is changed or something
     this.updatePizzaSlices = function(){
+        this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
         this.increaseAngle = 2 * Math.PI / this.numSlices;
 
         // updating pizza nodes here
@@ -128,16 +130,20 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
             // update the nodes position!
             let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
             let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
-            this.pizzaNodesArr[i].nodeX = nodeX;
-            this.pizzaNodesArr[i].nodeY = nodeY;
+
+            //this.pizzaNodesArr[i].nodeX = nodeX;
+            //this.pizzaNodesArr[i].nodeY = nodeY;
+            this.pizzaNodesArr[i].updatePizzaNode(nodeX, nodeY);
         }
     }
 
     this.drawPizzaSlices = function() {
         // reset angles
         // this.increaseAngle = 2 * Math.PI / this.numSlices;
+        //this.startAngle = 0;
         //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
-        this.startAngle = 0;
+        this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
+        
 
         push();
         // change angle mode to RADIANS!
@@ -220,6 +226,10 @@ function PizzaNode(slice, layer, nodeX, nodeY, colorPalette) {
         ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
 
         pop();
+    }
+    this.updatePizzaNode = function(_x, _y){
+        this.nodeX = _x;
+        this.nodeY = _y;
     }
 
     // Swaps the isActive variable of the node
