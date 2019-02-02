@@ -102,7 +102,8 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     this.increaseAngle = 2 * Math.PI / this.numSlices;
     //this.startAngle = 0; // 22.5 if 16 slices
     //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
-    this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
+    this.increaseAngle = (2 * Math.PI) / this.numSlices;
+    this.startAngle = (270 * Math.PI/180) - (this.increaseAngle / 2);
     // have an array to store all the pizza nodes to access later
     this.pizzaNodesArr = [];
 
@@ -119,8 +120,9 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
 
     // call update when slices num is changed or something
     this.updatePizzaSlices = function(){
-        this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
         this.increaseAngle = 2 * Math.PI / this.numSlices;
+        this.startAngle = (270 * Math.PI/180) - (this.increaseAngle / 2);
+        console.log(this.increaseAngle);
 
         // updating pizza nodes here
         for (var i = 0; i < this.numSlices; i++) {
@@ -142,8 +144,9 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
         // this.increaseAngle = 2 * Math.PI / this.numSlices;
         //this.startAngle = 0;
         //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
-        this.startAngle = ((270-(360/this.numSlices)/2) * Math.PI/180);
         
+        this.increaseAngle = 2 * Math.PI / this.numSlices;
+        this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
 
         push();
         // change angle mode to RADIANS!
@@ -156,6 +159,8 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
         // draw num slices
         for (var i = 0; i < this.numSlices; i++) {
             arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle + this.increaseAngle, PIE);
+
+            this.pizzaNodesArr[i].drawPizzaNode();
 
             let nodeAngle = this.startAngle + this.increaseAngle / 2;
 
