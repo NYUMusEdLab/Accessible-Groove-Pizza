@@ -47,6 +47,7 @@ let currentInst = soundArr[0]; // default
 
 // Visuals
 let colorPalette = colors1;
+let currentKeyMap = keymap1;
 
 let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;

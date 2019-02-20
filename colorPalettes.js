@@ -4,6 +4,12 @@
 /*
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
+https://venngage.com/blog/color-blind-friendly-palette/
+*/
+
+/*
+Avoid bad color combinations that may present an issue for color blind people, 
+such as red & green, green & brown, green & blue, blue & grey, blue & purple, green & grey and green & black.
 */
 
 const colors1 = {
@@ -24,4 +30,15 @@ const colors2 = {
     pizzaCenter: {r: 255, g: 238, b: 0}, // yellow
     nodeOn: {r: 0, g: 0, b: 0}, // black
     nodeOff: {r: 250, g: 250, b: 250} // white
+}
+
+// shades of red
+const colors3 = {
+    background: {r: 190, g: 180, b: 170}, //
+    outerRing: {r: 94, g: 19, b: 14}, // 
+    middleRing: {r: 255, g: 77, b: 57}, // 
+    innerRing: {r: 127, g: 39, b: 29}, // 
+    pizzaCenter: {r: 229, g: 68, b: 50}, // 
+    nodeOn: {r: 0, g: 0, b: 0}, // 
+    nodeOff: {r: 255, g: 212, b: 208} //
 }
