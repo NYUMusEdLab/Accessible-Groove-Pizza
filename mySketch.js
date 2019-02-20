@@ -23,6 +23,10 @@ let kickReal = new Tone.Player('audio/drumset/Kick.wav').toMaster();
 let snareReal = new Tone.Player('audio/drumset/Snare.wav').toMaster();
 let hatReal = new Tone.Player('audio/drumset/HH.wav').toMaster();
 
+let bongo1 = new Tone.Player('audio/bongos/bongo1.wav').toMaster();
+let bongo2 = new Tone.Player('audio/bongos/bongo2.wav').toMaster();
+let bongo3 = new Tone.Player('audio/bongos/bongo3.wav').toMaster();
+
 let kick_beats = new Array(numBeats).fill(0);
 let snare_beats = new Array(numBeats).fill(0);
 let hat_beats = new Array(numBeats).fill(0);
@@ -34,7 +38,11 @@ let soundArr = [{name: '16 Bit',
                  instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']},
                 {name: 'Drum Set',
                  sounds: [hatReal, snareReal, kickReal],
-                 instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']}];
+                 instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']},
+                {name: 'Bongos',
+                 sounds: [bongo1, bongo2, bongo3],
+                 instrumentNames: ['Bongo 1', 'Bongo 2', 'Bongo 3']
+                }];
 let currentInst = soundArr[0]; // default
 
 // Visuals
@@ -275,7 +283,9 @@ function keyReleased() {
         }
         // press W
         else if (keyCode === 87) {
-
+            updateColorPalette(colors2);
+            currentInst = soundArr[2];
+            myVoice.speak(currentInst.name);
         }
         // press S
         else if (keyCode === 83) {

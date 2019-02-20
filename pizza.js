@@ -133,18 +133,11 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
             let nodeX = this.sliceX + (((this.sliceSize - 100) / 2) * Math.cos(nodeAngle));
             let nodeY = this.sliceY + (((this.sliceSize - 100) / 2) * Math.sin(nodeAngle));
 
-            //this.pizzaNodesArr[i].nodeX = nodeX;
-            //this.pizzaNodesArr[i].nodeY = nodeY;
             this.pizzaNodesArr[i].updatePizzaNode(nodeX, nodeY);
         }
     }
 
     this.drawPizzaSlices = function() {
-        // reset angles
-        // this.increaseAngle = 2 * Math.PI / this.numSlices;
-        //this.startAngle = 0;
-        //this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
-        
         this.increaseAngle = 2 * Math.PI / this.numSlices;
         this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
 
