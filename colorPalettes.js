@@ -1,6 +1,6 @@
 // This file simply holds objects that set the colors for the Interface
 // Make sure in mySketch.js that the global colorPalette variable
-
+ 
 /*
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
