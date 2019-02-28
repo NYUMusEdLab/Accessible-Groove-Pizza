@@ -1,6 +1,6 @@
 // This file simply holds objects that set the colors for the Interface
 // Make sure in mySketch.js that the global colorPalette variable
- 
+
 /*
 Things to consider with colors:
 http://www.colourblindawareness.org/colour-blindness/types-of-colour-blindness/
@@ -8,7 +8,7 @@ https://venngage.com/blog/color-blind-friendly-palette/
 */
 
 /*
-Avoid bad color combinations that may present an issue for color blind people, 
+Avoid bad color combinations that may present an issue for color blind people,
 such as red & green, green & brown, green & blue, blue & grey, blue & purple, green & grey and green & black.
 */
 
@@ -35,10 +35,23 @@ const colors2 = {
 // shades of red
 const colors3 = {
     background: {r: 190, g: 180, b: 170}, //
-    outerRing: {r: 94, g: 19, b: 14}, // 
-    middleRing: {r: 255, g: 77, b: 57}, // 
-    innerRing: {r: 127, g: 39, b: 29}, // 
-    pizzaCenter: {r: 229, g: 68, b: 50}, // 
-    nodeOn: {r: 0, g: 0, b: 0}, // 
+    outerRing: {r: 94, g: 19, b: 14}, //
+    middleRing: {r: 255, g: 77, b: 57}, //
+    innerRing: {r: 127, g: 39, b: 29}, //
+    pizzaCenter: {r: 229, g: 68, b: 50}, //
+    nodeOn: {r: 0, g: 0, b: 0}, //
     nodeOff: {r: 255, g: 212, b: 208} //
+}
+
+const colors4 = {
+  background: {r: 153, g: 51, b: 0}, //
+  outerRing: {r: 204, g: 107, b: 0}, //
+  middleRing: {r: 40, g: 60, b: 90}, //
+  innerRing: {r: 112, g: 140, b: 172}, //
+  pizzaCenter: {r: 192, g: 186, b: 196}, //
+  nodeOn: {r: 0, g: 0, b: 0}, //
+  nodeOff: {r: 255, g: 212, b: 208} //
+
+
+
 }
