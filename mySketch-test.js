@@ -93,13 +93,15 @@ function voicesLoaded() {
 /////////////////////////////////////////// Audio Stuff ////////////////////////////////////////////////////////////////////////////////
 let loop = new Tone.Sequence(function(time, col){
     let column = getBeatColumn(beats, col);
-    //console.log(col);
+    cleanHighlights(numBeatsArr.length);
     for(let i = 0; i < column.length; i++) {
         if (column[i]) {
+            hightlightNode(i, col);
             playSound(currentInst.sounds[i], time);
-        }
+        }  
     }
 }, numBeatsArr, beatDur);
+
 loop.start();
 
 function playSound(samp, time) {
@@ -132,9 +134,10 @@ function changeNumSlices(){
     loop.dispose();
     loop = new Tone.Sequence(function(time, col){
         let column = getBeatColumn(beats, col);
-        //console.log(col);
+        cleanHighlights(numBeatsArr.length);
         for(let i = 0; i < column.length; i++) {
             if (column[i]) {
+                hightlightNode(i, col);
                 playSound(currentInst.sounds[i], time);
             }
         }
@@ -278,6 +281,7 @@ function keyReleased() {
             }
             else{
                 console.log('stop playing');
+                cleanHighlights(numBeatsArr.length);
                 Tone.Transport.stop();
                 isPlaying = false;
             }
@@ -285,6 +289,30 @@ function keyReleased() {
     }
 }
 ///////////////////////////////////////////// End of Keyboard Stuff ////////////////////////////////////////////////////////////////////
+
+function hightlightNode(layerIndex, slice){
+    let layer;
+    if (layerIndex===0){
+        layer = 2;
+    }
+    else if (layerIndex===1){
+        layer = 1;
+    }
+    else{
+        layer = 0;
+    }
+    let currentPlayingNode = myPizza.pizzaSlicesArr[layer].pizzaNodesArr[slice];
+    currentPlayingNode.highlight();
+}
+
+function cleanHighlights(numSlices){
+    for (let i=0; i<3;i++){
+        for (let j=0; j<numSlices;j++){
+            let thisNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
+            thisNode.notHighlight(); 
+        }
+    }
+}
 
 function rec(){
     

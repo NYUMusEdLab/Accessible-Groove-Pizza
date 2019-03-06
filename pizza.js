@@ -215,15 +215,22 @@ function PizzaNode(slice, layer, nodeX, nodeY, colorPalette) {
       false: colorPalette.nodeOff
     };
     this.isActive = false;
+    this.isHighlighted = false;
 
     this.drawPizzaNode = function() {
         // draw the node!
         push();
-        noStroke();
+        if (this.isHighlighted){
+            stroke(255);
+            strokeWeight(this.nodeSize/3);
+        }
+        else{
+            noStroke();
+        }
         fill(this.fillColor[this.isActive].r, this.fillColor[this.isActive].g, this.fillColor[this.isActive].b);
         ellipse(this.nodeX, this.nodeY, this.nodeSize, this.nodeSize);
-
         pop();
+  
     }
     this.updatePizzaNode = function(_x, _y){
         this.nodeX = _x;
@@ -238,6 +245,12 @@ function PizzaNode(slice, layer, nodeX, nodeY, colorPalette) {
       return ([this.layer, this.slice, this.isActive]);
     }
 
+    this.highlight = function(){
+        this.isHighlighted = true;
+    }
+    this.notHighlight = function(){
+        this.isHighlighted = false;
+    }
     this.updateColor = function(colorPalette) {
         this.fillColor = {
             true: colorPalette.nodeOn,
