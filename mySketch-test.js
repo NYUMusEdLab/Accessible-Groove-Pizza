@@ -46,7 +46,7 @@ let soundArr = [{name: '16 Bit',
 let currentInst = soundArr[0]; // default
 
 // Visuals
-let colorPaletteArr = [colors1, colors2, colors3];
+let colorPaletteArr = [colors1, colors2, colors4];
 let colorPalette = colorPaletteArr[0];
 let currentKeyMap = keymap1;
 
@@ -315,5 +315,5 @@ function cleanHighlights(numSlices){
 }
 
 function rec(){
-    
+
 }
