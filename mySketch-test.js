@@ -98,7 +98,7 @@ let loop = new Tone.Sequence(function(time, col){
         if (column[i]) {
             hightlightNode(i, col);
             playSound(currentInst.sounds[i], time);
-        }  
+        }
     }
 }, numBeatsArr, beatDur);
 
@@ -132,6 +132,7 @@ function changeNumSlices(){
     // redo loop
     loop.stop();
     loop.dispose();
+
     loop = new Tone.Sequence(function(time, col){
         let column = getBeatColumn(beats, col);
         cleanHighlights(numBeatsArr.length);
@@ -139,7 +140,7 @@ function changeNumSlices(){
             if (column[i]) {
                 hightlightNode(i, col);
                 playSound(currentInst.sounds[i], time);
-            }
+            }  
         }
     }, numBeatsArr, beatDur);
     console.log(loop.length);
@@ -281,15 +282,14 @@ function keyReleased() {
             }
             else{
                 console.log('stop playing');
-                cleanHighlights(numBeatsArr.length);
                 Tone.Transport.stop();
+                cleanHighlights(numBeatsArr.length);
                 isPlaying = false;
             }
         }
     }
 }
 ///////////////////////////////////////////// End of Keyboard Stuff ////////////////////////////////////////////////////////////////////
-
 function hightlightNode(layerIndex, slice){
     let layer;
     if (layerIndex===0){
@@ -309,6 +309,7 @@ function cleanHighlights(numSlices){
     for (let i=0; i<3;i++){
         for (let j=0; j<numSlices;j++){
             let thisNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
+            //console.log(thisNode);
             thisNode.notHighlight(); 
         }
     }

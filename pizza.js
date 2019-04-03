@@ -12,11 +12,11 @@ function Pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices, colorPalette) {
 
     // draw the pizza!
     // outer circle
-    this.pizzaSlicesArr.push(new PizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 3, this.colorPalette.outerRing));
+    this.pizzaSlicesArr.push(new PizzaSlices(4, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 3, this.colorPalette));
     // middle circle
-    this.pizzaSlicesArr.push(new PizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 2, this.colorPalette.middleRing));
+    this.pizzaSlicesArr.push(new PizzaSlices(3, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio * 2, this.colorPalette));
     // inner circle
-    this.pizzaSlicesArr.push(new PizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, this.colorPalette.innerRing));
+    this.pizzaSlicesArr.push(new PizzaSlices(2, this.numSlices, this.pizzaX, this.pizzaY, this.innerSize + this.innerSize * this.sizeRatio, this.colorPalette));
 
     // call this function when change the slice number or something
     this.updatePizza = function(){
@@ -33,8 +33,15 @@ function Pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices, colorPalette) {
         this.pizzaSlicesArr.forEach(function(slice) {
             slice.drawPizzaSlices();
         });
+        this.pizzaSlicesArr.forEach(function(slice) {
+            slice.drawShapes();
+        });
+        this.pizzaSlicesArr.forEach(function(slice) {
+            slice.drawNodes();
+        });
 
         // inner circle of pizza
+        noStroke();
         fill(this.colorPalette.pizzaCenter.r, this.colorPalette.pizzaCenter.g,this.colorPalette.pizzaCenter.b);
         ellipse(this.pizzaX, this.pizzaY, this.innerSize, this.innerSize);
 
@@ -49,6 +56,8 @@ function Pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices, colorPalette) {
         this.pizzaSlicesArr[2].drawNum = true;
         pop();
     }
+
+
 
     // Function that gets called whenever the pizza has been clicked on
     // Check if a node has been clicked on
@@ -87,7 +96,7 @@ function Pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices, colorPalette) {
     }
 }
 
-function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
+function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) {
     this.layer = layer;
     this.numSlices = numSlices;
 
@@ -96,7 +105,7 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
 
     this.sliceSize = sliceSize;
 
-    this.color = color;
+    this.colorPalette = colorPalette;
     this.drawNum = false; // set to true on outer layer
     // to draw
     this.increaseAngle = 2 * Math.PI / this.numSlices;
@@ -142,18 +151,29 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
         this.startAngle = (270 * Math.PI/180)  - (this.increaseAngle / 2);
 
         push();
+        
         // change angle mode to RADIANS!
         angleMode(RADIANS);
 
         // stroke color light grey
         stroke(200);
-        fill(this.color.r, this.color.g, this.color.b);
+        let layerColor;
+        if (this.layer == 4){
+            layerColor = this.colorPalette.outerRing;
+        }
+        else if (this.layer == 3){
+            layerColor = this.colorPalette.middleRing;
+        }
+        else if (this.layer == 2){
+            layerColor = this.colorPalette.innerRing;
+        }
+        fill(layerColor.r, layerColor.g, layerColor.b);
 
         // draw num slices
-        for (var i = 0; i < this.numSlices; i++) {
+        for (let i = 0; i < this.numSlices; i++) {
             arc(this.sliceX, this.sliceY, this.sliceSize, this.sliceSize, this.startAngle, this.startAngle + this.increaseAngle, PIE);
 
-            this.pizzaNodesArr[i].drawPizzaNode();
+            //this.pizzaNodesArr[i].drawPizzaNode();
 
             let nodeAngle = this.startAngle + this.increaseAngle / 2;
 
@@ -168,10 +188,44 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
                 pop();
             }
             this.startAngle += this.increaseAngle;
+
+        }
+        pop();
+    }
+
+    this.drawShapes = function(){
+        let shapeColor;
+        if (this.layer == 4){
+            shapeColor = this.colorPalette.outerShape;
+        }
+        else if (this.layer == 3){
+            shapeColor = this.colorPalette.middleShape;
+        }
+        else if (this.layer == 2){
+            shapeColor = this.colorPalette.innerShape;
+        }
+        console.log(shapeColor);
+        push();
+        strokeWeight(5);
+        stroke(shapeColor.r, shapeColor.g, shapeColor.b, 150);
+        //fill(this.colorPalette.outerShape);
+        fill(shapeColor.r, shapeColor.g, shapeColor.b, 150);
+        beginShape();
+        for (let j=0; j<this.pizzaNodesArr.length; j++){
+            if (this.pizzaNodesArr[j].isActive){
+                console.log(this.pizzaNodesArr[j]);
+                vertex(this.pizzaNodesArr[j].nodeX, this.pizzaNodesArr[j].nodeY);
+            }
+        }
+        endShape(CLOSE);
+        pop();
+    }
+
+    this.drawNodes = function(){
+        for (let i = 0; i < this.numSlices; i++) {
             // draw the nodes on each slice!
             this.pizzaNodesArr[i].drawPizzaNode();
         }
-        pop();
     }
 
     // If a node is clicked, it will call its chageState function and return
@@ -188,34 +242,39 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, color) {
     }
 
     this.updateColor = function(colorPalette) {
-        if (this.layer == 4) { this.color = colorPalette.outerRing; }
-        else if (this.layer == 3) { this.color = colorPalette.middleRing; }
-        else if (this.layer == 2) { this.color = colorPalette.innerRing; }
-
+        this.colorPalette = colorPalette;
         this.pizzaNodesArr.forEach(function(node) {
             node.updateColor(colorPalette);
         });
 
     }
+
 }
 
-// this function would probably draw shapes
-function PizzaNodes() {}
 
 function PizzaNode(slice, layer, nodeX, nodeY, colorPalette) {
     this.slice = slice;
     this.layer = layer;
-
+    if (this.layer==4){
+        this.nodeOnColor = colorPalette.outerNodeOn;
+    }
+    else if (this.layer==3){
+        this.nodeOnColor = colorPalette.middleNodeOn;
+    }
+    else if (this.layer==2){
+        this.nodeOnColor = colorPalette.innerNodeOn;
+    }
     this.nodeX = nodeX;
     this.nodeY = nodeY;
 
     this.nodeSize = 15;
     this.fillColor = {
-      true: colorPalette.nodeOn,
+      true: this.nodeOnColor,
       false: colorPalette.nodeOff
     };
     this.isActive = false;
     this.isHighlighted = false;
+
 
     this.drawPizzaNode = function() {
         // draw the node!
@@ -252,8 +311,17 @@ function PizzaNode(slice, layer, nodeX, nodeY, colorPalette) {
         this.isHighlighted = false;
     }
     this.updateColor = function(colorPalette) {
+        if (this.layer==4){
+            this.nodeOnColor = colorPalette.outerNodeOn;
+        }
+        else if (this.layer==3){
+            this.nodeOnColor = colorPalette.middleNodeOn;
+        }
+        else if (this.layer==2){
+            this.nodeOnColor = colorPalette.innerNodeOn;
+        }
         this.fillColor = {
-            true: colorPalette.nodeOn,
+            true: this.nodeOnColor,
             false: colorPalette.nodeOff
         }
     }
