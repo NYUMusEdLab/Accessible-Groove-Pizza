@@ -2,6 +2,7 @@
 // Figure out cleaner way of converting layers to beat array indices
 // Look at inheritance and how the various classes are declared
 // Refactor when possible
+let inExploreMode = false;
 
 let bpm = 120;
 Tone.Transport.bpm.value = bpm;
@@ -193,20 +194,26 @@ function updateColorPalette(newColorPalette) {
 //////////////////////////////////////////// Mouse Stuff /////////////////////////////////////////////////////////////////////////////
 // change the activeness of each node
 function mouseReleased(){
-    if (Tone.context.state !== 'running'){
-        Tone.context.resume();
-        console.log('just resumed');
-    }
-    // Click on the pizza
-    // If the function returns false, the user did not click on a node
-    // Otherwise, update the beatsArray with the node that change
-    let positionAndState = myPizza.clickPizza(mouseX, mouseY);
-    if (!positionAndState) {return false;} // If clicking did not do anything
+    if (inExploreMode){
 
-    let layerVal = positionAndState[0] - 2; // layers range from 2 to 4
-    let sliceVal = positionAndState[1] - 1; // slices begin at 1
-    let stateVal = positionAndState[2];
-    beats[layerVal][sliceVal] = stateVal;
+    }
+    else{
+        if (Tone.context.state !== 'running'){
+            Tone.context.resume();
+            console.log('just resumed');
+        }
+        // Click on the pizza
+        // If the function returns false, the user did not click on a node
+        // Otherwise, update the beatsArray with the node that change
+        let positionAndState = myPizza.clickPizza(mouseX, mouseY);
+        if (!positionAndState) {return false;} // If clicking did not do anything
+
+        let layerVal = positionAndState[0] - 2; // layers range from 2 to 4
+        let sliceVal = positionAndState[1] - 1; // slices begin at 1
+        let stateVal = positionAndState[2];
+        beats[layerVal][sliceVal] = stateVal;       
+    }
+
 }
 //////////////////////////////////////////// End of Mouse Stuff /////////////////////////////////////////////////////////////////////
 

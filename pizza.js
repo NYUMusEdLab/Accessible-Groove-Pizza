@@ -204,7 +204,6 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
         else if (this.layer == 2){
             shapeColor = this.colorPalette.innerShape;
         }
-        console.log(shapeColor);
         push();
         strokeWeight(5);
         stroke(shapeColor.r, shapeColor.g, shapeColor.b, 150);
