@@ -145,7 +145,7 @@ function changeNumSlices(){
         }
     }, numBeatsArr, beatDur);
     console.log(loop.length);
-    loop.start();
+    loop.start(0);
 
     console.log(myPizza);
 }
