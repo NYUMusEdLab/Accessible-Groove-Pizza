@@ -211,10 +211,10 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
         //fill(this.colorPalette.outerShape);
         fill(shapeColor.r, shapeColor.g, shapeColor.b, 150);
         beginShape();
-        for (let j=0; j<this.pizzaNodesArr.length; j++){
-            if (this.pizzaNodesArr[j].isActive){
-                console.log(this.pizzaNodesArr[j]);
-                vertex(this.pizzaNodesArr[j].nodeX, this.pizzaNodesArr[j].nodeY);
+        for (let i=0; i<this.numSlices; i++){
+            if (this.pizzaNodesArr[i].isActive){
+                console.log(this.pizzaNodesArr[i]);
+                vertex(this.pizzaNodesArr[i].nodeX, this.pizzaNodesArr[i].nodeY);
             }
         }
         endShape(CLOSE);
