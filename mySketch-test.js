@@ -4,6 +4,9 @@
 // Refactor when possible
 let inExploreMode = false;
 
+let audioModeArr = ["speech", "sound", "none"];
+let audioMode = audioModeArr[1];
+
 let bpm = 120;
 Tone.Transport.bpm.value = bpm;
 let beatDur = '16n'; // should be constant
@@ -233,7 +236,13 @@ function keyReleased() {
                 myVoice.speak('Instrument.');
             }
             else{
-                myVoice.speak(currentInst.instrumentNames[currentLayer-2]);
+                if (audioMode === "sound"){
+                    // play the actual sound
+                    playSound(currentInst.sounds[currentLayer-2], time);
+                }
+                else{
+                    myVoice.speak(currentInst.instrumentNames[currentLayer-2]);
+                }
             }
 
         }
@@ -242,12 +251,23 @@ function keyReleased() {
                 if (currentKeyMap[keyCode].val-1<3){
                     updateColorPalette(colorPaletteArr[currentKeyMap[keyCode].val-1]);
                     currentInst = soundArr[currentKeyMap[keyCode].val-1];
-                    myVoice.speak(currentInst.name);
+                    if (audioMode === "sound"){
+                        // play instrument sounds
+
+                    }
+                    else{
+                        myVoice.speak(currentInst.name);
+                    }
                 }
             }
             else{
                 currentSlice = currentKeyMap[keyCode].val;
-                myVoice.speak('Slice '+currentSlice);
+                if (audioMode === "sound"){
+                    playSliceAudio(currentSlice);
+                }
+                else{
+                    myVoice.speak('Slice '+currentSlice);
+                }
             }
 
         }
@@ -316,7 +336,6 @@ function cleanHighlights(numSlices){
     for (let i=0; i<3;i++){
         for (let j=0; j<numSlices;j++){
             let thisNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[j];
-            //console.log(thisNode);
             thisNode.notHighlight(); 
         }
     }

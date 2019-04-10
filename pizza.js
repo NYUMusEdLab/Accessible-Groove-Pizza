@@ -131,7 +131,6 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
     this.updatePizzaSlices = function(){
         this.increaseAngle = 2 * Math.PI / this.numSlices;
         this.startAngle = (270 * Math.PI/180) - (this.increaseAngle / 2);
-        console.log(this.increaseAngle);
 
         // updating pizza nodes here
         for (var i = 0; i < this.numSlices; i++) {
@@ -212,7 +211,6 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
         beginShape();
         for (let i=0; i<this.numSlices; i++){
             if (this.pizzaNodesArr[i].isActive){
-                console.log(this.pizzaNodesArr[i]);
                 vertex(this.pizzaNodesArr[i].nodeX, this.pizzaNodesArr[i].nodeY);
             }
         }
