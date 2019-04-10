@@ -284,7 +284,8 @@ function keyReleased() {
         }
         // press W
         else if (keyCode === 87) {
-            updateColorPalette(colors2);
+            console.log('We are here');
+            updateColorPalette(colors3);
             currentInst = soundArr[2];
             myVoice.speak(currentInst.name);
         }
