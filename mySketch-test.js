@@ -231,9 +231,16 @@ function mouseReleased() {
 function selectInst(val) {
     currentLayer = val;
     if (currentLayer === 1) {
-        myVoice.speak('Instrument.');
-    } else {
-        myVoice.speak(currentInst.instrumentNames[currentLayer - 2]);
+            myVoice.speak('Instrument.');
+    }
+    else {
+        if (audioMode === "sound") {
+            // play the actual sound
+            playSound(currentInst.sounds[currentLayer - 2]);
+        } 
+        else {
+            myVoice.speak(currentInst.instrumentNames[currentLayer - 2]);
+        }
     }
 }
 
@@ -244,9 +251,15 @@ function selectSlice(val) {
             currentInst = soundArr[val - 1];
             myVoice.speak(currentInst.name);
         }
-    } else {
+    } 
+    else {
         currentSlice = val;
-        myVoice.speak('Slice ' + currentSlice);
+        if (audioMode === "sound") {
+            playSliceAudio(currentSlice);
+        }
+        else {
+            myVoice.speak('Slice ' + currentSlice);
+        }
     }
 }
 
@@ -387,7 +400,8 @@ function keyReleased() {
                     if (audioMode === "sound") {
                         // play instrument sounds
 
-                    } else {
+                    }
+                    else {
                         myVoice.speak(currentInst.name);
                     }
                 }
@@ -396,7 +410,8 @@ function keyReleased() {
                 currentSlice = currentKeyMap[keyCode].val;
                 if (audioMode === "sound") {
                     playSliceAudio(currentSlice);
-                } else {
+                }
+                else {
                     myVoice.speak('Slice ' + currentSlice);
                 }
             }
@@ -425,7 +440,8 @@ function keyReleased() {
                     }
                     if (currentNode.isActive) {
                         myVoice.speak('On.');
-                    } else {
+                    }
+                    else {
                         myVoice.speak('Off.')
                     }
                 }
