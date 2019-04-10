@@ -211,10 +211,7 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
         beginShape();
         for (let i=0; i<this.numSlices; i++){
             if (this.pizzaNodesArr[i].isActive){
-<<<<<<< HEAD
                 // console.log(this.pizzaNodesArr[i]);
-=======
->>>>>>> 6620e405745131223c1f306b8048fb41948268c6
                 vertex(this.pizzaNodesArr[i].nodeX, this.pizzaNodesArr[i].nodeY);
             }
         }

@@ -233,7 +233,7 @@ function selectInst(val) {
         if (audioMode === "sound") {
             // play the actual sound
             playSound(currentInst.sounds[currentLayer - 2]);
-        } 
+        }
         else {
             myVoice.speak(currentInst.instrumentNames[currentLayer - 2]);
         }
@@ -242,12 +242,12 @@ function selectInst(val) {
 
 function selectSlice(val) {
     if (currentLayer === 1) {
-        if (currentKeyMap[keyCode].val - 1 < 3) {
+        if (val - 1 < 3) { // val[1] - but, that breaks
             updateColorPalette(colorPaletteArr[val - 1]);
             currentInst = soundArr[val - 1];
             myVoice.speak(currentInst.name);
         }
-    } 
+    }
     else {
         currentSlice = val;
         if (audioMode === "sound") {
@@ -307,7 +307,7 @@ function select_and_toggle(val) {
 function nextLayer() {
     if (currentLayer == 4) {
         selectInst(1);
-    } 
+    }
     else {
         selectInst(currentLayer + 1);
     }
@@ -317,7 +317,6 @@ function select16thGrouping(val) {
     km16thSlicegroup = val;
 }
 
-<<<<<<< HEAD
 function select16thSlice(val){
   selectSlice(km16thSlicegroup * 4 + val);
 }
@@ -325,15 +324,6 @@ function select16thSlice(val){
 function select16thSliceToggle(val){
   select16thSlice(val);
   toggleSlice();
-=======
-function select16thSlice(val) {
-    selectSlice(val * 4 + km16thSlicegroup);
-}
-
-function select16thSliceToggle(val) {
-    selectSlice(val * 4 + km16thSlicegroup);
-    toggleSlice();
->>>>>>> 6620e405745131223c1f306b8048fb41948268c6
 }
 
 ///////////////////////////////////////////////////// Keyboard Stuff //////////////////////////////////////////////////////////////////
@@ -382,96 +372,13 @@ function keyReleased() {
 
     if (Object.keys(currentKeyMap).includes(keyCode.toString())) {
         console.log(currentKeyMap[keyCode]);
-        if (currentKeyMap[keyCode].type === 'l') {
-            currentLayer = currentKeyMap[keyCode].val;
-            if (currentLayer === 1) {
-                myVoice.speak('Instrument.');
-            } 
-            else {
-                if (audioMode === "sound") {
-                    // play the actual sound
-                    playSound(currentInst.sounds[currentLayer - 2], time);
-                } 
-                else {
-                    myVoice.speak(currentInst.instrumentNames[currentLayer - 2]);
-                }
-            }
-
-        } 
-        else if (currentKeyMap[keyCode].type === 's') {
-            if (currentLayer === 1) {
-                if (currentKeyMap[keyCode].val - 1 < 3) {
-                    updateColorPalette(colorPaletteArr[currentKeyMap[keyCode].val - 1]);
-                    currentInst = soundArr[currentKeyMap[keyCode].val - 1];
-                    if (audioMode === "sound") {
-                        // play instrument sounds
-
-                    }
-                    else {
-                        myVoice.speak(currentInst.name);
-                    }
-                }
-            } 
-            else {
-                currentSlice = currentKeyMap[keyCode].val;
-                if (audioMode === "sound") {
-                    playSliceAudio(currentSlice);
-                }
-                else {
-                    myVoice.speak('Slice ' + currentSlice);
-                }
-            }
-
-        } 
-        else if (currentKeyMap[keyCode].type === 'r') {
-
-        } 
-        else if (currentKeyMap[keyCode].type === 'toggle') {
-            // if at center layer
-            if (currentLayer === 1) {} else {
-                // make sure we are within limit to adjust nodes
-                if (currentSlice <= myPizza.numSlices) {
-                    // loop through pizzaSlicesArr
-                    for (let i = 0; i < myPizza.pizzaSlicesArr.length; i++) {
-                        // if layer number match
-                        if (currentLayer === myPizza.pizzaSlicesArr[i].layer) {
-                            currentNode = myPizza.pizzaSlicesArr[i].pizzaNodesArr[currentSlice - 1];
-                            // turn it around
-                            let positionAndState = currentNode.changeState();
-                            let layerVal = positionAndState[0] - 2;
-                            let sliceVal = positionAndState[1] - 1;
-                            let stateVal = positionAndState[2];
-                            beats[layerVal][sliceVal] = stateVal;
-                        }
-                    }
-                    if (currentNode.isActive) {
-                        myVoice.speak('On.');
-                    }
-                    else {
-                        myVoice.speak('Off.')
-                    }
-                }
-            }
-        } 
-        else if (currentKeyMap[keyCode].type === 'play') {
-            if (!isPlaying) {
-                console.log('start playing');
-                Tone.Transport.start();
-                isPlaying = true;
-            } 
-            else {
-                console.log('stop playing');
-                Tone.Transport.stop();
-                cleanHighlights(numBeatsArr.length);
-                isPlaying = false;
-            }
-        }
 
         for (var i = 0; i < currentKeyMap[keyCode].keyHeld.length; i++) {
             if (checkHeldKeys(currentKeyMap[keyCode].keyHeld[i])) {
 
                 var type = currentKeyMap[keyCode].type[i];
                 var val = currentKeyMap[keyCode].val[i];
+                console.log('in selects', val);
 
                 if (type === FUNC_SELECT_LAYER) {
                     selectInst(val);
