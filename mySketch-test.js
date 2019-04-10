@@ -1,7 +1,5 @@
 // todo
-// Figure out cleaner way of converting layers to beat array indices
-// Look at inheritance and how the various classes are declared
-// Refactor when possible
+// Make sure that an out-of-range slice can't be selected
 let inExploreMode = false;
 
 let bpm = 120;
@@ -160,8 +158,6 @@ function draw() {
     // nodeGrid(50, 100, 400, 200, 16);
     myPizza.drawPizza();
 
-
-
     // slider text
     push();
     noStroke();
@@ -305,11 +301,11 @@ function select16thGrouping(val){
 }
 
 function select16thSlice(val){
-  selectSlice(val * 4 + km16thSlicegroup);
+  selectSlice(km16thSlicegroup * 4 + val);
 }
 
 function select16thSliceToggle(val){
-  selectSlice(val * 4 + km16thSlicegroup);
+  select16thSlice(val);
   toggleSlice();
 }
 

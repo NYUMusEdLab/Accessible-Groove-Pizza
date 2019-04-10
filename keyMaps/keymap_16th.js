@@ -9,26 +9,26 @@ let keymap_16th = {
 	// layer
 	[KEY_DIGIT1]: {keyHeld: [[]],
                        type: [FUNC_SELECT16THGROUP],
-                       val: [1]}, // 1
+                       val: [0]}, // 1
 	[KEY_DIGIT2]: {keyHeld: [[]],
                        type: [FUNC_SELECT16THGROUP],
-                       val: [2]}, // 2
+                       val: [1]}, // 2
 	[KEY_DIGIT3]: {keyHeld: [[]],
                        type: [FUNC_SELECT16THGROUP],
-                       val: [3]}, // 3
+                       val: [2]}, // 3
 	[KEY_DIGIT4]: {keyHeld: [[]],
                        type: [FUNC_SELECT16THGROUP],
-                       val: [4]}, // 4
+                       val: [3]}, // 4
 
 	[KEY_BACKSLASH]: {keyHeld: [[]],
                        type: [FUNC_NEXTLAYER],
                        val: [null]}, // 4
-  
+
 	// slice
-	[KEY_D]: keymap16thSliceSelect(0), 
-	[KEY_F]: keymap16thSliceSelect(1), 
-	[KEY_G]: keymap16thSliceSelect(2),
-	[KEY_H]: keymap16thSliceSelect(3), 
+	[KEY_D]: keymap16thSliceSelect(1),
+	[KEY_F]: keymap16thSliceSelect(2),
+	[KEY_G]: keymap16thSliceSelect(3),
+	[KEY_H]: keymap16thSliceSelect(4), 
 
 	// shape
 	[KEY_Z]: {keyHeld: [[]],
