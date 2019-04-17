@@ -41,8 +41,8 @@ let noteArr = [
 			   */
 console.log(noteArr);
 
-function playSliceAudio(slice){
-	for (let i=0; i<noteArr.length; i++){
+function playSliceAudio(numSlices, slice){
+	for (let i=0; i<numSlices.length; i++){
 		if (slice == i+1){
 			console.log(noteArr[i]);
 			synth.triggerAttackRelease(noteArr[i], '8n');			
