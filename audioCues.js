@@ -3,7 +3,6 @@
 
 // when navigate through pizza slices, synthesize a pitch
 
-
 let synth = new Tone.Synth().toMaster();
 synth.oscillator.type = 'triangle';
 synth.volume.value = -6;
@@ -30,6 +29,18 @@ oscillator  : {
 }
 */
 
+let polySynth = new Tone.PolySynth (4, Tone.Synth).toMaster();
+polySynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
+/*
+{
+polyphony  : 4 ,
+volume  : 0 ,
+detune  : 0 ,
+voice  : Tone.Synth
+}
+*/
+
+
 let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
 			   'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
 			   'C5', 'D5', 'E5', 'F5'];
@@ -45,8 +56,13 @@ function playSliceAudio(numSlices, slice){
 	console.log(numSlices+' '+slice);
 	for (let i=0; i<numSlices; i++){
 		if (slice == i+1){
-			console.log(noteArr[i]);
-			synth.triggerAttackRelease(noteArr[i], '8n');			
+			//console.log(noteArr[i]);
+			//synth.triggerAttackRelease(noteArr[i], '8n');
+			//synth.triggerAttackRelease(noteArr[0], '8n', '+1');
+
+			let noteSet = new Set([noteArr[0], noteArr[i]]);
+			//console.log([...noteSet]);	
+			polySynth.triggerAttackRelease([...noteSet], '8n');	
 		}
 	}
 }
