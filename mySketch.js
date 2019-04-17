@@ -202,7 +202,8 @@ function updateColorPalette(newColorPalette) {
 function mouseReleased() {
     if (inExploreMode) {
 
-    } else {
+    }
+    else {
         if (Tone.context.state !== 'running') {
             Tone.context.resume();
             console.log('just resumed');
