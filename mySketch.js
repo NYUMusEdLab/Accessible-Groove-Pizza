@@ -15,6 +15,9 @@ let numBeatsArr = [...Array(numBeats).keys()];
 let bpm_slider;
 let numSlices_slider;
 
+// Instruction Text
+let instructions;
+
 // all the sound sources
 // TODO - Automate how these are loaded
 let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
@@ -83,6 +86,14 @@ function setup() {
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
 
+    instructions = createElement('textarea');
+    instructions.elt.rows = 8;
+    instructions.elt.cols = 28;
+    instructions.elt.value = 'test';
+    // instructions.elt.disabled = true;
+    instructions.id('instructions');
+    instructions.position(150 - 50, windowHeight / 2 - 150);
+
     bpm_slider = createSlider(50, 180, bpm, 1);
     bpm_slider.id('bpm_slider');
     bpm_slider.changed(changeBPM);
@@ -129,11 +140,13 @@ function getBeatColumn(arr, col) {
 
 // change according to slider values
 function changeBPM() {
+    myVoice.speak(this.value());
     Tone.Transport.bpm.rampTo(bpm_slider.value(), 0.5);
 }
 
 function changeNumSlices() {
-    myPizza.numSlices = numSlices_slider.value();
+    myVoice.speak(this.value());
+    myPizza.numSlices = this.value();
     myPizza.updatePizza();
     myPizza.drawPizza();
 
@@ -442,7 +455,12 @@ function rec() {
 
 /////////////// TAB ////////////////
 function getTab(){
-    console.log(document.activeElement.id);
-    
-}
+    let controlNames = {
+        'bpm_slider': 'Tempo Slider',
+        'numSlices_slider': 'Number of Slices Slider',
+        'instructions': "Instructions"
+    }
+    let element_speak = controlNames[document.activeElement.id] + " " + document.activeElement.value;
+    myVoice.speak(element_speak);
 
+}
