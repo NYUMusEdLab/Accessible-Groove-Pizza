@@ -252,7 +252,8 @@ function selectSlice(val) {
     else {
         currentSlice = val;
         if (audioMode === "sound") {
-            playSliceAudio(myPizza.numSlices, currentSlice);
+            let beatState = beats[currentLayer - 2][currentSlice - 1];
+            playSliceAudio(myPizza.numSlices, currentSlice, beatState);
         }
         else {
             myVoice.speak('Slice ' + currentSlice);
