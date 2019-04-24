@@ -84,11 +84,13 @@ function setup() {
     console.log(myPizza.pizzaSlicesArr);
 
     bpm_slider = createSlider(50, 180, bpm, 1);
+    bpm_slider.id('bpm_slider');
     bpm_slider.changed(changeBPM);
     bpm_slider.position(150, windowHeight / 2);
     bpm_slider.style('width', '100px');
 
     numSlices_slider = createSlider(2, 16, numBeats, 1);
+    numSlices_slider.id('numSlices_slider');
     numSlices_slider.changed(changeNumSlices);
     numSlices_slider.position(150, windowHeight / 2 + 50);
     numSlices_slider.style('width', '100px');
@@ -201,7 +203,6 @@ function updateColorPalette(newColorPalette) {
 // change the activeness of each node
 function mouseReleased() {
     if (inExploreMode) {
-
     }
     else {
         if (Tone.context.state !== 'running') {
@@ -356,6 +357,10 @@ function keyPressed() {
 }
 
 function keyReleased() {
+    if (keyCode == 9){
+        getTab();
+    }
+
     // Switching the key map
     if (keyCode == KEY_PAGEUP) {
         currentKeyMapIndex = (currentKeyMapIndex + 1) % keymapArray.length;
@@ -433,3 +438,11 @@ function cleanHighlights(numSlices) {
 function rec() {
 
 }
+
+
+/////////////// TAB ////////////////
+function getTab(){
+    console.log(document.activeElement.id);
+    
+}
+
