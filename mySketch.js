@@ -86,13 +86,18 @@ function setup() {
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
 
+    /*
     instructions = createElement('textarea');
     instructions.elt.rows = 8;
     instructions.elt.cols = 28;
     instructions.elt.value = 'test';
-    // instructions.elt.disabled = true;
-    instructions.id('instructions');
+    instructions.elt.disabled = true;
+    //instructions.elt.readonly = true;
+    */
+    instructions = createA('#', 'testing instructions');
     instructions.position(150 - 50, windowHeight / 2 - 150);
+    instructions.id('instructions');
+    instructions.style('text-decoration', 'none');
 
     bpm_slider = createSlider(50, 180, bpm, 1);
     bpm_slider.id('bpm_slider');
@@ -460,7 +465,8 @@ function getTab(){
         'numSlices_slider': 'Number of Slices Slider',
         'instructions': "Instructions"
     }
-    let element_speak = controlNames[document.activeElement.id] + " " + document.activeElement.value;
+    let element_speak = controlNames[document.activeElement.id] + " " + document.activeElement.innerHTML;
+
     myVoice.speak(element_speak);
 
 }
