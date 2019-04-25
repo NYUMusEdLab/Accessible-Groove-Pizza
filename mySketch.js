@@ -375,6 +375,16 @@ function keyPressed() {
 }
 
 function keyReleased() {
+    // not a smart 
+    if (document.activeElement.id == "instructions"){
+        if (keyCode === LEFT_ARROW){
+            document.activeElement.innerHTML = 'TEST LEFT';
+        }
+        else if (keyCode === RIGHT_ARROW){
+            document.activeElement.innerHTML = 'TEST RIGHT';
+        }
+        myVoice.speak(document.activeElement.innerHTML);
+    }
     if (keyCode == 9){
         getTab();
     }
