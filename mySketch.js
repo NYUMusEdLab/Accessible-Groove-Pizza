@@ -21,7 +21,17 @@ let currentInstruction = 0;
 let instructionsList = controls1; // add other support later
 
 // all the sound sources
-// TODO - Automate how these are loaded
+let musicVol = new Tone.Volume(0);
+let controlsVol = new Tone.Volume(0);
+
+// Array Idea
+let testKick = [
+    new Tone.Player('audio/16-bit/Kick.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/Kick.wav').chain(controlsVol, Tone.Master)
+]
+
+
+
 let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
 let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
 let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
