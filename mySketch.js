@@ -17,6 +17,8 @@ let numSlices_slider;
 
 // Instruction Text
 let instructions;
+let currentInstruction = 0;
+let instructionsList = controls1; // add other support later
 
 // all the sound sources
 // TODO - Automate how these are loaded
@@ -94,7 +96,7 @@ function setup() {
     instructions.elt.disabled = true;
     //instructions.elt.readonly = true;
     */
-    instructions = createA('#', 'testing instructions');
+    instructions = createA('#', instructionsList[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
     instructions.id('instructions');
     instructions.style('text-decoration', 'none');
@@ -375,15 +377,18 @@ function keyPressed() {
 }
 
 function keyReleased() {
-    // not a smart 
+    // not a smart
     if (document.activeElement.id == "instructions"){
         if (keyCode === LEFT_ARROW){
-            document.activeElement.innerHTML = 'TEST LEFT';
+            currentInstruction = mod(currentInstruction -= 1, instructionsList.length);
+            document.activeElement.innerHTML = instructionsList[currentInstruction];
+            myVoice.speak(document.activeElement.innerHTML);
         }
         else if (keyCode === RIGHT_ARROW){
-            document.activeElement.innerHTML = 'TEST RIGHT';
+            currentInstruction = mod(currentInstruction += 1, instructionsList.length);
+            document.activeElement.innerHTML = instructionsList[currentInstruction];
+            myVoice.speak(document.activeElement.innerHTML);
         }
-        myVoice.speak(document.activeElement.innerHTML);
     }
     if (keyCode == 9){
         getTab();
