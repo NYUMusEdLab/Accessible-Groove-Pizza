@@ -17,11 +17,21 @@ let numSlices_slider;
 
 // Instruction Text
 let instructions;
-let currentInstruction = 0;
-let instructionsList = controls1; // add other support later
+let instructionsList = [controls1, controls2]; // add other support later
+let currentInstructions = instructionsList[0];
 
 // all the sound sources
-// TODO - Automate how these are loaded
+let musicVol = new Tone.Volume(0);
+let controlsVol = new Tone.Volume(0);
+
+// Array Idea
+let testKick = [
+    new Tone.Player('audio/16-bit/Kick.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/Kick.wav').chain(controlsVol, Tone.Master)
+]
+
+
+
 let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
 let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
 let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
@@ -96,7 +106,8 @@ function setup() {
     instructions.elt.disabled = true;
     //instructions.elt.readonly = true;
     */
-    instructions = createA('#', controls1[0]);
+
+    instructions = createA('#', currentInstructions[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
     instructions.id('instructions');
     instructions.style('text-decoration', 'none');
@@ -379,28 +390,14 @@ function keyPressed() {
 }
 
 function keyReleased() {
-    // testing...
     if (document.activeElement.id == "instructions"){
         if (keyCode === LEFT_ARROW){
-            currentInstruction = mod(currentInstruction -= 1, instructionsList.length);
-            document.activeElement.innerHTML = instructionsList[currentInstruction];
-            myVoice.speak(document.activeElement.innerHTML);
+            document.activeElement.innerHTML = updateInstructions(currentInstructions, -1);
         }
         else if (keyCode === RIGHT_ARROW){
-            currentInstruction = mod(currentInstruction += 1, instructionsList.length);
-            document.activeElement.innerHTML = instructionsList[currentInstruction];
-            myVoice.speak(document.activeElement.innerHTML);
+            document.activeElement.innerHTML = updateInstructions(currentInstructions, 1);
         }
         myVoice.speak(document.activeElement.innerHTML);
-        /*
-        if (keyCode === LEFT_ARROW){
-            document.activeElement.innerHTML = displayInstructions(-1);
-        }
-        else if (keyCode === RIGHT_ARROW){
-            document.activeElement.innerHTML = displayInstructions(+1);
-        }
-        myVoice.speak(document.activeElement.innerHTML);
-        */
     }
     if (keyCode == 9){
         getTab();

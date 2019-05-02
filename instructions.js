@@ -1,11 +1,3 @@
-/*
-let controls1 = [
-    'Press tab to continue listening to the directions. Or press escape to return to the instrument.',
-    'Default keyboard control:',
-    'To switch between drumsets, press Number 1, and then Q or A or W',
-    'To navigate through layers, press Number 2 or 3 or 4'
-];
-*/
 let controls1 = [
     'Press left and right to queue new directions.',
     'Press up to repeat the current instruction.',
@@ -19,21 +11,22 @@ let controls1 = [
     'While holding the function key, press up or down to change key mappings.'
 ];
 
-/*
-let controls1Iterator = 0;
+let controls2 = [
+    'Press tab to continue listening to the directions. Or press escape to return to the instrument.',
+    'Default keyboard control:',
+    'To switch between drumsets, press Number 1, and then Q or A or W',
+    'To navigate through layers, press Number 2 or 3 or 4'
+];
+
+let controlIterator = 0;
 
 // left/right arrow sets the iterator
-function displayInstructions(val) {
-	controls1Iterator += val;
-	if (controls1Iterator <= 0){
-		controls1Iterator = 0;
-	}
-	else if (controls1Iterator >= controls1.length-1){
-		controls1Iterator = controls1.length-1;
-	}
-	return controls1[controls1Iterator];
+function updateInstructions(controls, val) {
+	controlIterator = mod(controlIterator += val, controls.length);
+	console.log(controlIterator);
+	return controls[controlIterator];
 }
-*/
+
 
 // Custom modulus function for iterating within the
 // instructions list that supports negative numbers
