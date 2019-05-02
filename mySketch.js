@@ -2,7 +2,7 @@
 // Make sure that an out-of-range slice can't be selected
 let inExploreMode = false;
 
-let audioModeArr = ["speech", "sound", "none"];
+let audioModeArr = ["speech", "sound", "none"]; // lerp
 let audioMode = audioModeArr[1];
 
 let bpm = 120;
@@ -17,6 +17,8 @@ let numSlices_slider;
 
 // Instruction Text
 let instructions;
+let currentInstruction = 0;
+let instructionsList = controls1; // add other support later
 
 // all the sound sources
 // TODO - Automate how these are loaded
@@ -64,7 +66,7 @@ let currentKeyMap = keymapArray[0];
 
 let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;
-let myRec;
+//let myRec;
 
 function preload() {
     // audio cues
@@ -94,10 +96,12 @@ function setup() {
     instructions.elt.disabled = true;
     //instructions.elt.readonly = true;
     */
-    instructions = createA('#', 'testing instructions');
+    instructions = createA('#', controls1[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
     instructions.id('instructions');
     instructions.style('text-decoration', 'none');
+    instructions.style('max-width', '200px');
+
 
     bpm_slider = createSlider(50, 180, bpm, 1);
     bpm_slider.id('bpm_slider');
@@ -375,15 +379,28 @@ function keyPressed() {
 }
 
 function keyReleased() {
-    // not a smart 
+    // testing...
     if (document.activeElement.id == "instructions"){
         if (keyCode === LEFT_ARROW){
-            document.activeElement.innerHTML = 'TEST LEFT';
+            currentInstruction = mod(currentInstruction -= 1, instructionsList.length);
+            document.activeElement.innerHTML = instructionsList[currentInstruction];
+            myVoice.speak(document.activeElement.innerHTML);
         }
         else if (keyCode === RIGHT_ARROW){
-            document.activeElement.innerHTML = 'TEST RIGHT';
+            currentInstruction = mod(currentInstruction += 1, instructionsList.length);
+            document.activeElement.innerHTML = instructionsList[currentInstruction];
+            myVoice.speak(document.activeElement.innerHTML);
         }
         myVoice.speak(document.activeElement.innerHTML);
+        /*
+        if (keyCode === LEFT_ARROW){
+            document.activeElement.innerHTML = displayInstructions(-1);
+        }
+        else if (keyCode === RIGHT_ARROW){
+            document.activeElement.innerHTML = displayInstructions(+1);
+        }
+        myVoice.speak(document.activeElement.innerHTML);
+        */
     }
     if (keyCode == 9){
         getTab();
@@ -463,12 +480,7 @@ function cleanHighlights(numSlices) {
     }
 }
 
-function rec() {
-
-}
-
-
-/////////////// TAB ////////////////
+//////////////////////////////////// TAB //////////////////////////////////////////
 function getTab(){
     let controlNames = {
         'bpm_slider': 'Tempo Slider',
@@ -480,3 +492,27 @@ function getTab(){
     myVoice.speak(element_speak);
 
 }
+
+////////////////////////////////////////// End of TAB //////////////////////////////////////
+
+
+
+///////////////////////////////////// Volume Controls /////////////////////////////////////
+/*
+myVoice.setVolume();
+
+// synth volume
+offSynth.set({"oscillator": {"volume":{"value":-6}});
+onSynth.set({"oscillator": {"volume":{"value":-10}});
+
+// instrumental sounds
+for (let i = 0; i < currentInst.sounds.length; i++){
+    currentInst.sounds[i].volume.value = -6;
+}
+*/
+
+// 1. drumset low, instrution normal, only when playing??
+
+// 2. regular volume for both
+// 3. drumset normal, no instrutions
+// 4. panning instructions left & right

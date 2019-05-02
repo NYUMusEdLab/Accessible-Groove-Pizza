@@ -6,7 +6,7 @@
 let offSynth = new Tone.PolySynth (4, Tone.Synth).toMaster();
 let onSynth = new Tone.PolySynth (4, Tone.Synth).toMaster();
 offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
-onSynth.set({"oscillator":{"type":"square"}}, {"volume":{"value":-10}});
+onSynth.set({"oscillator":{"type":"square"}}, {"volume":{"value":-20}});
 
 let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
 			   'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
