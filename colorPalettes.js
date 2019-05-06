@@ -79,10 +79,10 @@ const colors4 = {
   middleShape: {r: 0, g: 10, b: 40},
   middleNodeOn:{r: 0, g: 10, b: 40},
   innerRing: {r: 112, g: 140, b: 172}, //
-  innerShape: {r: 62, g: 90, b: 122},
-  innerNodeOn:{r: 62, g: 90, b: 122},
-  pizzaCenter: {r: 192, g: 186, b: 196}, //
-  nodeOff: {r: 255, g: 212, b: 208}, //
+  innerShape: {r: 152, g: 180, b: 212},
+  innerNodeOn:{r: 152, g: 180, b: 212},
+  pizzaCenter: {r: 204, g: 107, b: 0}, //
+  nodeOff: {r: 250, g: 250, b: 250}, //
 
   text: {r: 250, g: 250, b: 250}, // white
   htmlText: 'white'

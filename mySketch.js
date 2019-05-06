@@ -153,7 +153,7 @@ function getBeatColumn(arr, col) {
 // change according to slider values
 function changeBPM() {
     myVoice.speak(this.value());
-    Tone.Transport.bpm.rampTo(bpm_slider.value(), 0.5);
+    Tone.Transport.bpm.rampTo(bpm_slider.value(), 0.01);
 }
 
 function changeNumSlices() {
@@ -198,12 +198,13 @@ function draw() {
     push();
     noStroke();
     fill(colorPalette.text.r, colorPalette.text.g, colorPalette.text.b);
+    textAlign(CENTER, CENTER);
     textStyle(BOLD);
     textSize(18);
-    text('BPM', 80, height / 2 + 10);
-    text(bpm_slider.value(), 250, height / 2 + 10);
-    text('Slices', 80, height / 2 + 60);
-    text(numSlices_slider.value(), 250, height / 2 + 60);
+    text('BPM', 110, height / 2 + 10);
+    text(bpm_slider.value(), 280, height / 2 + 10);
+    text('Slices', 110, height / 2 + 60);
+    text(numSlices_slider.value(), 280, height / 2 + 60);
     pop();
 
     // indication on which layer and slice
