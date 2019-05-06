@@ -51,14 +51,13 @@ class Pizza {
         let newBeatList = [];
         for (let n of newNodes) {
             n.calculateAngleAndRadius(centerNode);
-            n.calculateBeat(self.numBeats);
+            n.calculateBeat(self.arcs);
             n.calculateSlice(self.radii);
             newBeatList.push(n.slice, n.beat);
         }
 
         // If nothing has changed, then do nothing
         if (newBeatList.toString() == self.previousBeatList.toString()) { return false; }
-
         self.sendOSCMessage(newBeatList);
         self.previousBeatList = newBeatList;
 
@@ -137,7 +136,8 @@ class Node {
     // seem to only be getting 0's - check on this function
     calculateBeat(arcs) {
         if (!(this.angle + 1)) { return false; }
-        for (i in arcs) {
+        for (let i in arcs) {
+            console.log(arcs[i]);
             // Case for first slice
             if (arcs[i][0] > arcs[i][1]) {
                 if (this.angle > arcs[i][0] || this.angle <= arcs[i][1]) {

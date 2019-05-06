@@ -56,7 +56,7 @@ let soundArr = [{
         instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']
     },
     {
-        name: 'Drum Set',
+        name: 'Drumset',
         sounds: [hatReal, snareReal, kickReal],
         instrumentNames: ['Hi Hat', 'Snare Drum', 'Kick Drum']
     },
@@ -69,7 +69,7 @@ let soundArr = [{
 let currentInst = soundArr[0]; // default
 
 // Visuals
-let colorPaletteArr = [colors1, colors2, colors4];
+let colorPaletteArr = [colors5, colors2, colors4];
 let colorPalette = colorPaletteArr[0];
 let currentKeyMapIndex = 0;
 let currentKeyMap = keymapArray[0];
@@ -98,21 +98,13 @@ function setup() {
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
 
-    /*
-    instructions = createElement('textarea');
-    instructions.elt.rows = 8;
-    instructions.elt.cols = 28;
-    instructions.elt.value = 'test';
-    instructions.elt.disabled = true;
-    //instructions.elt.readonly = true;
-    */
-
     instructions = createA('#', currentInstructions[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
     instructions.id('instructions');
     instructions.style('text-decoration', 'none');
+    instructions.style('font-size', '20px');
     instructions.style('max-width', '200px');
-
+    instructions.style('color', colorPalette.htmlText);
 
     bpm_slider = createSlider(50, 180, bpm, 1);
     bpm_slider.id('bpm_slider');
@@ -199,13 +191,13 @@ function changeNumSlices() {
 function draw() {
     // color light grey
     background(colorPalette.background.r, colorPalette.background.g, colorPalette.background.b);
-    // nodeGrid(50, 100, 400, 200, 16);
+
     myPizza.drawPizza();
 
     // slider text
     push();
     noStroke();
-    fill(0);
+    fill(colorPalette.text.r, colorPalette.text.g, colorPalette.text.b);
     textStyle(BOLD);
     textSize(18);
     text('BPM', 80, height / 2 + 10);
@@ -219,7 +211,7 @@ function draw() {
     textStyle(BOLD);
     textSize(18);
     noStroke();
-    fill(0);
+    fill(colorPalette.text.r, colorPalette.text.g, colorPalette.text.b);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height / 2 + 110);
     pop();
 }
@@ -227,7 +219,7 @@ function draw() {
 function updateColorPalette(newColorPalette) {
     colorPalette = newColorPalette;
     myPizza.updateColor(colorPalette);
-    console.log(colorPalette)
+    instructions.style('color', colorPalette.htmlText);
 }
 
 ///////////////////////////////// End of Draw Stuff ///////////////////////////////////////////////////////////////////////////////////
@@ -393,14 +385,19 @@ function keyReleased() {
     if (document.activeElement.id == "instructions"){
         if (keyCode === LEFT_ARROW){
             document.activeElement.innerHTML = updateInstructions(currentInstructions, -1);
+            myVoice.speak(document.activeElement.innerHTML);
         }
         else if (keyCode === RIGHT_ARROW){
             document.activeElement.innerHTML = updateInstructions(currentInstructions, 1);
+            myVoice.speak(document.activeElement.innerHTML);
         }
-        myVoice.speak(document.activeElement.innerHTML);
+        else if (keyCode === UP_ARROW){
+            myVoice.speak(document.activeElement.innerHTML);
+        }
     }
-    if (keyCode == 9){
-        getTab();
+    if (keyCode === TAB){
+        let element_speech = getTab();
+        myVoice.speak(element_speech);
     }
 
     // Switching the key map
@@ -414,7 +411,6 @@ function keyReleased() {
         console.log("CurrentKeyMapIndex: " + currentKeyMapIndex);
         currentKeyMap = keymapArray[currentKeyMapIndex];
     }
-
 
     pressedKeyMap.delete(keyCode);
     lastKeyReleased = keyCode;
@@ -484,9 +480,7 @@ function getTab(){
         'numSlices_slider': 'Number of Slices Slider',
         'instructions': "Instructions"
     }
-    let element_speak = controlNames[document.activeElement.id] + " " + document.activeElement.innerHTML;
-
-    myVoice.speak(element_speak);
+    return controlNames[document.activeElement.id] + " " + document.activeElement.innerHTML;
 
 }
 
