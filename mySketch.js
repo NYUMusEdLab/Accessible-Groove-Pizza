@@ -2,9 +2,6 @@
 // Make sure that an out-of-range slice can't be selected
 let inExploreMode = false;
 
-let audioModeArr = ["speech", "sound", "none"]; // lerp
-let audioMode = audioModeArr[1];
-
 let bpm = 120;
 Tone.Transport.bpm.value = bpm;
 let beatDur = '16n'; // should be constant
@@ -23,63 +20,48 @@ let currentInstructions = instructionsList[0];
 // all the sound sources
 let musicVol = new Tone.Volume(0);
 let controlsVol = new Tone.Volume(0);
-let verb = new Tone.Freeverb(); // Not currently used
+let verb = new Tone.Freeverb();
 verb.wet.value = 0.2;
 
 // Array Idea
 let kick16 = [
-    new Tone.Player('audio/16-bit/Kick.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/Kick.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/16-bit/Kick.wav').chain(controlsVol, Tone.Master)
 ]
 let snare16 = [
-    new Tone.Player('audio/16-bit/Snare.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/Snare.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/16-bit/Snare.wav').chain(controlsVol, Tone.Master)
 ];
 let hat16 = [
-    new Tone.Player('audio/16-bit/HH.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/HH.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/16-bit/HH.wav').chain(controlsVol, Tone.Master)
 ];
 
 let kickReal = [
-    new Tone.Player('audio/drumset/Kick.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/Kick.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/drumset/Kick.wav').chain(controlsVol, Tone.Master)
 ];
 let snareReal = [
-    new Tone.Player('audio/drumset/Snare.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/Snare.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/drumset/Snare.wav').chain(controlsVol, Tone.Master)
 ];
 let hatReal = [
-    new Tone.Player('audio/drumset/HH.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/HH.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/drumset/HH.wav').chain(controlsVol, Tone.Master)
 ];
 
 let bongo1 = [
-    new Tone.Player('audio/bongos/bongo1.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo1.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/bongos/bongo1.wav').chain(controlsVol, Tone.Master)
 ];
 let bongo2 = [
-    new Tone.Player('audio/bongos/bongo2.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo2.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/bongos/bongo2.wav').chain(controlsVol, Tone.Master)
 ];
 let bongo3 = [
-    new Tone.Player('audio/bongos/bongo3.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo3.wav').chain(musicVol, verb, Tone.Master),
     new Tone.Player('audio/bongos/bongo3.wav').chain(controlsVol, Tone.Master)
 ];
-
-
-/* old way...
-let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
-let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
-let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
-
-let kickReal = new Tone.Player('audio/drumset/Kick.wav').toMaster();
-let snareReal = new Tone.Player('audio/drumset/Snare.wav').toMaster();
-let hatReal = new Tone.Player('audio/drumset/HH.wav').toMaster();
-
-let bongo1 = new Tone.Player('audio/bongos/bongo1.wav').toMaster();
-let bongo2 = new Tone.Player('audio/bongos/bongo2.wav').toMaster();
-let bongo3 = new Tone.Player('audio/bongos/bongo3.wav').toMaster();
-*/
 
 let kick_beats = new Array(numBeats).fill(0);
 let snare_beats = new Array(numBeats).fill(0);
@@ -256,6 +238,7 @@ function draw() {
     noStroke();
     fill(colorPalette.text.r, colorPalette.text.g, colorPalette.text.b);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height / 2 + 110);
+    text('Current Mode: ' + currentVolSetting.getAudioMode(), 80, height / 2 + 150);
     pop();
 }
 
@@ -300,7 +283,7 @@ function selectInst(val) {
             myVoice.speak('Instrument.');
     }
     else {
-        if (audioMode === "sound") {
+        if (currentVolSetting.getAudioMode() === 'Sonify') {
             // play the actual sound
             //playSound(currentInst.sounds[currentLayer - 2]);
             playSound(currentInst.sounds[currentLayer - 2][1]);
@@ -321,7 +304,7 @@ function selectSlice(val) {
     }
     else {
         currentSlice = val;
-        if (audioMode === "sound") {
+        if (currentVolSetting.getAudioMode() === 'Sonify') {
             let beatState = beats[currentLayer - 2][currentSlice - 1];
             playSliceAudio(myPizza.numSlices, currentSlice, beatState);
         }
@@ -335,14 +318,11 @@ function play() {
     if (!isPlaying) {
         console.log('start playing');
         Tone.Transport.start();
-        currentVolSetting.setWhenPlaying();
-
         isPlaying = true;
     } else {
         console.log('stop playing');
         cleanHighlights(numBeatsArr.length);
         Tone.Transport.stop();
-        currentVolSetting.setNotPlaying();
         isPlaying = false;
     }
 }
@@ -460,17 +440,8 @@ function keyReleased() {
         currentKeyMap = keymapArray[currentKeyMapIndex];
     }
     // switch volume settings
-    else if (keyCode == 189){  // -
-        currentVolSetting.changeVolSettingTo(mod(currentVolSetting.num - 1, 3));
-        if (isPlaying){currentVolSetting.setWhenPlaying()} else{currentVolSetting.setNotPlaying();}
-        console.log('vol setting', currentVolSetting.num);
-
-    }
-    else if (keyCode == 187){ // +
-        currentVolSetting.changeVolSettingTo(mod(currentVolSetting.num + 1, 3));
-        if (isPlaying){currentVolSetting.setWhenPlaying()} else{currentVolSetting.setNotPlaying();}
-        console.log('vol setting', currentVolSetting.num);
-    }
+    else if (keyCode == KEY_MINUS){ currentVolSetting.changeVolSettingLeft(); }
+    else if (keyCode == KEY_EQUAL){ currentVolSetting.changeVolSettingRight(); }
 
     pressedKeyMap.delete(keyCode);
     lastKeyReleased = keyCode;
@@ -547,26 +518,17 @@ function getTab(){
 ////////////////////////////////////////// End of TAB //////////////////////////////////////
 
 //////////////////////////////////// AUDIO CUES //////////////////////////////////////////
-// play current instrument sound when turn the node on
-// play it in reverse when turn the node off
-
 // when navigate through pizza slices, synthesize a pitch
 
 let offSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
 let onSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
 offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
-onSynth.set({"oscillator":{"type":"square"}}, {"volume":{"value":-20}});
+onSynth.set({"oscillator":{"type":"square"}});
+onSynth.volume.val = -20;
 
 let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
                'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
                'C5', 'D5', 'E5', 'F5'];
-        /*
-let noteArr = [
-               'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
-               'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5',
-               'C6', 'D6'];
-               */
-// console.log(noteArr);
 
 function playSliceAudio(numSlices, slice, sliceIsActive){
     console.log(numSlices+' '+slice);
@@ -608,57 +570,61 @@ for (let i = 0; i < currentInst.sounds.length; i++){
 
 function volSetting(num){
     this.num = num;
+    this.numOfSettings = 3;
+    this.audioModes = ['Practice', 'Sonify', 'Perform'];
+
+    this.getAudioMode = function() {
+        return this.audioModes[this.num];
+    }
 
     this.changeVolSettingTo = function(num){
-        this.num = num;
+        this.num = mod(num, this.numOfSettings);
+        this.speakMode();
+        this.setVolumeMode();
     }
-    // 0. when playing, instruction low, drumset normal
-    // 1. regular volume for both
-    // 2. drumset normal, no instrutions
-    // 3. to be add: panning instructions left & right
 
-    this.setWhenPlaying = function(){
-        //console.log('vol playing');
-        if (this.num === 0){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(0.3);
-            controlsVol.volume.rampTo(-18, 1);
-        }
-        else if (this.num === 1){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(1);
-            controlsVol.volume.rampTo(0, 1);
-        }
-        else if (this.num === 2){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(0);
-            controlsVol.volume.mute = true;
-        }
-        else if (this.num === 3){
-
-        }
+    this.changeVolSettingRight = function() {
+        this.num = mod(this.num += 1, this.numOfSettings);
+        this.speakMode();
+        this.setVolumeMode();
     }
-    this.setNotPlaying = function(){
-        //console.log('vol not playing');
-        if (this.num === 0){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(1);
-            controlsVol.volume.rampTo(0, 1);
-        }
-        else if (this.num === 1){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(1);
-            controlsVol.volume.rampTo(0, 1);
-        }
-        else if (this.num === 2){
-            musicVol.volume.rampTo(0, 1);
-            myVoice.setVolume(0);
-            controlsVol.mute = true;
-            //controlsVol.volume.
-        }
-        else if (this.num === 3){
 
-        }
+    this.changeVolSettingLeft = function() {
+        this.num = mod(this.num -= 1, this.numOfSettings);
+        this.speakMode();
+        this.setVolumeMode();
+    }
+
+    this.setVolumeMode = function() {
+        let modes = [
+            this.setToPractice,
+            this.setToSonify,
+            this.setToPerform
+        ]
+        modes[this.num]();
+    }
+
+    this.setToPractice = function() {
+        musicVol.volume.rampTo(-18, 1);
+        myVoice.setVolume(0.3);
+        controlsVol.volume.rampTo(0, 1);
+    }
+
+    this.setToSonify = function() {
+        musicVol.volume.rampTo(-10, 1);
+        myVoice.setVolume(1);
+        controlsVol.volume.rampTo(0, 1);
+    }
+
+    this.setToPerform = function() {
+        musicVol.volume.rampTo(0, 1);
+        myVoice.setVolume(0);
+        controlsVol.volume.rampTo(-30, 1);
+    }
+
+    this.speakMode = function() {
+        myVoice.setVolume(1);
+        myVoice.speak(this.getAudioMode());
     }
 }
 
