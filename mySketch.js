@@ -23,6 +23,8 @@ let currentInstructions = instructionsList[0];
 // all the sound sources
 let musicVol = new Tone.Volume(0);
 let controlsVol = new Tone.Volume(0);
+let verb = new Tone.Freeverb();
+verb.wet.value = 0.2;
 
 // Array Idea
 let testKick = [
@@ -32,9 +34,12 @@ let testKick = [
 
 
 
-let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
-let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
-let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
+// let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
+// let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
+// let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
+let kick16 = new Tone.Player('audio/16-bit/Kick.wav').chain(verb, Tone.Master);
+let snare16 = new Tone.Player('audio/16-bit/Snare.wav').chain(verb, Tone.Master);
+let hat16 = new Tone.Player('audio/16-bit/HH.wav').chain(verb, Tone.Master);
 
 let kickReal = new Tone.Player('audio/drumset/Kick.wav').toMaster();
 let snareReal = new Tone.Player('audio/drumset/Snare.wav').toMaster();
@@ -283,7 +288,7 @@ function selectSlice(val) {
             playSliceAudio(myPizza.numSlices, currentSlice, beatState);
         }
         else {
-            myVoice.speak('Slice ' + currentSlice);
+            myVoice.speak(currentSlice);
         }
     }
 }

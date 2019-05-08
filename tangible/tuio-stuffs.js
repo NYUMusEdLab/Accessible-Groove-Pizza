@@ -137,7 +137,6 @@ class Node {
     calculateBeat(arcs) {
         if (!(this.angle + 1)) { return false; }
         for (let i in arcs) {
-            console.log(arcs[i]);
             // Case for first slice
             if (arcs[i][0] > arcs[i][1]) {
                 if (this.angle > arcs[i][0] || this.angle <= arcs[i][1]) {
