@@ -3,8 +3,8 @@
 
 // when navigate through pizza slices, synthesize a pitch
 
-let offSynth = new Tone.PolySynth (4, Tone.Synth).toMaster();
-let onSynth = new Tone.PolySynth (4, Tone.Synth).toMaster();
+let offSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
+let onSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
 offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
 onSynth.set({"oscillator":{"type":"square"}}, {"volume":{"value":-20}});
 
