@@ -23,23 +23,54 @@ let currentInstructions = instructionsList[0];
 // all the sound sources
 let musicVol = new Tone.Volume(0);
 let controlsVol = new Tone.Volume(0);
-let verb = new Tone.Freeverb();
+let verb = new Tone.Freeverb(); // Not currently used
 verb.wet.value = 0.2;
 
 // Array Idea
-let testKick = [
+let kick16 = [
     new Tone.Player('audio/16-bit/Kick.wav').chain(musicVol, Tone.Master),
     new Tone.Player('audio/16-bit/Kick.wav').chain(controlsVol, Tone.Master)
 ]
+let snare16 = [
+    new Tone.Player('audio/16-bit/Snare.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/Snare.wav').chain(controlsVol, Tone.Master)
+];
+let hat16 = [
+    new Tone.Player('audio/16-bit/HH.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/16-bit/HH.wav').chain(controlsVol, Tone.Master)
+];
+
+let kickReal = [
+    new Tone.Player('audio/drumset/Kick.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/Kick.wav').chain(controlsVol, Tone.Master)
+];
+let snareReal = [
+    new Tone.Player('audio/drumset/Snare.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/Snare.wav').chain(controlsVol, Tone.Master)
+];
+let hatReal = [
+    new Tone.Player('audio/drumset/HH.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/drumset/HH.wav').chain(controlsVol, Tone.Master)
+];
+
+let bongo1 = [
+    new Tone.Player('audio/bongos/bongo1.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo1.wav').chain(controlsVol, Tone.Master)
+];
+let bongo2 = [
+    new Tone.Player('audio/bongos/bongo2.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo2.wav').chain(controlsVol, Tone.Master)
+];
+let bongo3 = [
+    new Tone.Player('audio/bongos/bongo3.wav').chain(musicVol, Tone.Master),
+    new Tone.Player('audio/bongos/bongo3.wav').chain(controlsVol, Tone.Master)
+];
 
 
-
-// let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
-// let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
-// let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
-let kick16 = new Tone.Player('audio/16-bit/Kick.wav').chain(verb, Tone.Master);
-let snare16 = new Tone.Player('audio/16-bit/Snare.wav').chain(verb, Tone.Master);
-let hat16 = new Tone.Player('audio/16-bit/HH.wav').chain(verb, Tone.Master);
+/* old way...
+let kick16 = new Tone.Player('audio/16-bit/Kick.wav').toMaster();
+let snare16 = new Tone.Player('audio/16-bit/Snare.wav').toMaster();
+let hat16 = new Tone.Player('audio/16-bit/HH.wav').toMaster();
 
 let kickReal = new Tone.Player('audio/drumset/Kick.wav').toMaster();
 let snareReal = new Tone.Player('audio/drumset/Snare.wav').toMaster();
@@ -48,6 +79,7 @@ let hatReal = new Tone.Player('audio/drumset/HH.wav').toMaster();
 let bongo1 = new Tone.Player('audio/bongos/bongo1.wav').toMaster();
 let bongo2 = new Tone.Player('audio/bongos/bongo2.wav').toMaster();
 let bongo3 = new Tone.Player('audio/bongos/bongo3.wav').toMaster();
+*/
 
 let kick_beats = new Array(numBeats).fill(0);
 let snare_beats = new Array(numBeats).fill(0);
@@ -78,6 +110,9 @@ let colorPaletteArr = [colors5, colors2, colors4];
 let colorPalette = colorPaletteArr[0];
 let currentKeyMapIndex = 0;
 let currentKeyMap = keymapArray[0];
+
+// volume settings
+let currentVolSetting = new volSetting(0);
 
 let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;
@@ -136,7 +171,8 @@ let loop = new Tone.Sequence(function(time, col) {
     for (let i = 0; i < column.length; i++) {
         if (column[i]) {
             hightlightNode(i, col);
-            playSound(currentInst.sounds[i], time);
+            //playSound(currentInst.sounds[i], time);
+            playSound(currentInst.sounds[i][0], time);
         }
     }
 }, numBeatsArr, beatDur);
@@ -180,7 +216,8 @@ function changeNumSlices() {
         for (let i = 0; i < column.length; i++) {
             if (column[i]) {
                 hightlightNode(i, col);
-                playSound(currentInst.sounds[i], time);
+                //playSound(currentInst.sounds[i], time);
+                playSound(currentInst.sounds[i][0], time);
             }
         }
     }, numBeatsArr, beatDur);
@@ -265,7 +302,8 @@ function selectInst(val) {
     else {
         if (audioMode === "sound") {
             // play the actual sound
-            playSound(currentInst.sounds[currentLayer - 2]);
+            //playSound(currentInst.sounds[currentLayer - 2]);
+            playSound(currentInst.sounds[currentLayer - 2][1]);
         }
         else {
             myVoice.speak(currentInst.instrumentNames[currentLayer - 2]);
@@ -297,11 +335,14 @@ function play() {
     if (!isPlaying) {
         console.log('start playing');
         Tone.Transport.start();
+        currentVolSetting.setWhenPlaying();
+
         isPlaying = true;
     } else {
         console.log('stop playing');
         cleanHighlights(numBeatsArr.length);
         Tone.Transport.stop();
+        currentVolSetting.setNotPlaying();
         isPlaying = false;
     }
 }
@@ -388,6 +429,7 @@ function keyPressed() {
 }
 
 function keyReleased() {
+    // tab
     if (document.activeElement.id == "instructions"){
         if (keyCode === LEFT_ARROW){
             document.activeElement.innerHTML = updateInstructions(currentInstructions, -1);
@@ -416,6 +458,18 @@ function keyReleased() {
         currentKeyMapIndex = (currentKeyMapIndex - 1) % keymapArray.length;
         console.log("CurrentKeyMapIndex: " + currentKeyMapIndex);
         currentKeyMap = keymapArray[currentKeyMapIndex];
+    }
+    // switch volume settings
+    else if (keyCode == 189){  // -
+        currentVolSetting.changeVolSettingTo(mod(currentVolSetting.num - 1, 3));
+        if (isPlaying){currentVolSetting.setWhenPlaying()} else{currentVolSetting.setNotPlaying();}
+        console.log('vol setting', currentVolSetting.num);
+
+    }
+    else if (keyCode == 187){ // +
+        currentVolSetting.changeVolSettingTo(mod(currentVolSetting.num + 1, 3));
+        if (isPlaying){currentVolSetting.setWhenPlaying()} else{currentVolSetting.setNotPlaying();}
+        console.log('vol setting', currentVolSetting.num);
     }
 
     pressedKeyMap.delete(keyCode);
@@ -492,11 +546,55 @@ function getTab(){
 
 ////////////////////////////////////////// End of TAB //////////////////////////////////////
 
+//////////////////////////////////// AUDIO CUES //////////////////////////////////////////
+// play current instrument sound when turn the node on
+// play it in reverse when turn the node off
+
+// when navigate through pizza slices, synthesize a pitch
+
+let offSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
+let onSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
+offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
+onSynth.set({"oscillator":{"type":"square"}}, {"volume":{"value":-20}});
+
+let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
+               'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+               'C5', 'D5', 'E5', 'F5'];
+        /*
+let noteArr = [
+               'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
+               'C5', 'D5', 'E5', 'F5', 'G5', 'A5', 'B5',
+               'C6', 'D6'];
+               */
+// console.log(noteArr);
+
+function playSliceAudio(numSlices, slice, sliceIsActive){
+    console.log(numSlices+' '+slice);
+    for (let i=0; i<numSlices; i++){
+        if (slice == i+1){
+            //console.log(noteArr[i]);
+            //synth.triggerAttackRelease(noteArr[i], '8n');
+            //synth.triggerAttackRelease(noteArr[0], '8n', '+1');
+
+            let noteSet = new Set([noteArr[0], noteArr[i]]);
+            //console.log([...noteSet]);
+            if (sliceIsActive) {
+                onSynth.triggerAttackRelease([...noteSet], '8n');
+            }
+            else {
+                offSynth.triggerAttackRelease([...noteSet], '8n');
+            }
+
+        }
+    }
+}
+
+//////////////////////////// End of AUDIO CUES///////////////////////////////////////////
 
 
 ///////////////////////////////////// Volume Controls /////////////////////////////////////
 /*
-myVoice.setVolume();
+myVoice.setVolume(); //0 -1
 
 // synth volume
 offSynth.set({"oscillator": {"volume":{"value":-6}});
@@ -508,8 +606,62 @@ for (let i = 0; i < currentInst.sounds.length; i++){
 }
 */
 
-// 1. drumset low, instrution normal, only when playing??
+function volSetting(num){
+    this.num = num;
 
-// 2. regular volume for both
-// 3. drumset normal, no instrutions
-// 4. panning instructions left & right
+    this.changeVolSettingTo = function(num){
+        this.num = num;
+    }
+    // 0. when playing, instruction low, drumset normal
+    // 1. regular volume for both
+    // 2. drumset normal, no instrutions
+    // 3. to be add: panning instructions left & right
+
+    this.setWhenPlaying = function(){
+        //console.log('vol playing');
+        if (this.num === 0){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(0.3);
+            controlsVol.volume.rampTo(-18, 1);
+        }
+        else if (this.num === 1){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(1);
+            controlsVol.volume.rampTo(0, 1);
+        }
+        else if (this.num === 2){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(0);
+            controlsVol.volume.mute = true;
+        }
+        else if (this.num === 3){
+
+        }
+    }
+    this.setNotPlaying = function(){
+        //console.log('vol not playing');
+        if (this.num === 0){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(1);
+            controlsVol.volume.rampTo(0, 1);
+        }
+        else if (this.num === 1){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(1);
+            controlsVol.volume.rampTo(0, 1);
+        }
+        else if (this.num === 2){
+            musicVol.volume.rampTo(0, 1);
+            myVoice.setVolume(0);
+            controlsVol.mute = true;
+            //controlsVol.volume.
+        }
+        else if (this.num === 3){
+
+        }
+    }
+}
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
