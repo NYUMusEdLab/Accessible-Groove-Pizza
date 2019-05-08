@@ -12,6 +12,8 @@ Avoid bad color combinations that may present an issue for color blind people,
 such as red & green, green & brown, green & blue, blue & grey, blue & purple, green & grey and green & black.
 */
 
+// One from Martin = 4
+
 const colors1 = {
     background: {r: 210, g: 210, b: 210}, // grey
 
@@ -25,8 +27,10 @@ const colors1 = {
     innerShape: {r: 120, g: 30, b: 30},
     innerNodeOn:{r: 120, g: 30, b: 30},
     pizzaCenter: {r: 140, g: 250, b: 170}, // light green - may require multiple colors per instrument
+    nodeOff: {r: 250, g: 250, b: 250}, // white
 
-    nodeOff: {r: 250, g: 250, b: 250} // white
+    text: {r: 0, g: 0, b: 0}, // black
+    htmlText: 'black'
 };
 
 const colors2 = {
@@ -41,8 +45,10 @@ const colors2 = {
     innerShape: {r: 150, g: 0, b: 18},
     innerNodeOn:{r: 150, g: 0, b: 18},
     pizzaCenter: {r: 255, g: 238, b: 0}, // yellow
+    nodeOff: {r: 250, g: 250, b: 250}, // white
 
-    nodeOff: {r: 250, g: 250, b: 250} // white
+    text: {r: 0, g: 0, b: 0}, // black
+    htmlText: 'black'
 }
 
 // shades of red
@@ -58,8 +64,10 @@ const colors3 = {
     innerShape: {r: 80, g: 0, b: 0},
     innerNodeOn: {r: 80, g: 0, b: 0},
     pizzaCenter: {r: 229, g: 68, b: 50}, //
+    nodeOff: {r: 255, g: 212, b: 208}, //
 
-    nodeOff: {r: 255, g: 212, b: 208} //
+    text: {r: 0, g: 0, b: 0}, // black
+    htmlText: 'black'
 }
 
 const colors4 = {
@@ -71,9 +79,29 @@ const colors4 = {
   middleShape: {r: 0, g: 10, b: 40},
   middleNodeOn:{r: 0, g: 10, b: 40},
   innerRing: {r: 112, g: 140, b: 172}, //
-  innerShape: {r: 62, g: 90, b: 122},
-  innerNodeOn:{r: 62, g: 90, b: 122},
-  pizzaCenter: {r: 192, g: 186, b: 196}, //
+  innerShape: {r: 152, g: 180, b: 212},
+  innerNodeOn:{r: 152, g: 180, b: 212},
+  pizzaCenter: {r: 204, g: 107, b: 0}, //
+  nodeOff: {r: 250, g: 250, b: 250}, //
 
-  nodeOff: {r: 255, g: 212, b: 208} //
+  text: {r: 250, g: 250, b: 250}, // white
+  htmlText: 'white'
+}
+
+const colors5 = {
+  background: {r: 112, g: 140, b: 172}, //
+  outerRing: {r: 240, g: 200, b: 170}, //
+  outerShape: {r: 140, g: 100, b: 85},
+  outerNodeOn:{r: 140, g: 100, b: 85},
+  middleRing: {r: 40, g: 60, b: 90}, //
+  middleShape: {r: 20, g: 30, b: 45},
+  middleNodeOn:{r: 20, g: 30, b: 45},
+  innerRing: {r: 120, g: 120, b: 140}, //
+  innerShape: {r: 240, g: 200, b: 170},
+  innerNodeOn:{r: 240, g: 200, b: 170},
+  pizzaCenter: {r: 112, g: 140, b: 172}, //
+  nodeOff: {r: 250, g: 250, b: 250}, //
+
+  text: {r: 250, g: 250, b: 250}, // white
+  htmlText: 'white'
 }

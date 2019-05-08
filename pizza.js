@@ -47,9 +47,12 @@ function Pizza(pizzaX, pizzaY, innerSize, sizeRatio, numSlices, colorPalette) {
 
         push()
         // show type text
-        fill(0);
+        fill(this.colorPalette.text.r, this.colorPalette.text.g, this.colorPalette.text.b);
         noStroke();
-        text(currentInst.name, this.pizzaX-this.innerSize/3, this.pizzaY);
+        textAlign(CENTER, CENTER);
+        textStyle(BOLD);
+        textSize(18);
+        text(currentInst.name, this.pizzaX, this.pizzaY);
         pop();
 
         // outer numbers
@@ -180,7 +183,10 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
             if (this.drawNum === true) {
                 push();
                 noStroke();
-                fill(0);
+                textStyle(BOLD);
+                textSize(18);
+                textAlign(CENTER, CENTER);
+                fill(this.colorPalette.text.r, this.colorPalette.text.g, this.colorPalette.text.b);
                 let textX = this.sliceX + ((this.sliceSize + 50) * Math.cos(nodeAngle));
                 let textY = this.sliceY + ((this.sliceSize + 50) * Math.sin(nodeAngle));
                 text(this.pizzaNodesArr[i].slice, textX, textY);
