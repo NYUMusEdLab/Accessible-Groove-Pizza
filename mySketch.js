@@ -23,6 +23,8 @@ let currentInstructions = instructionsList[0];
 // all the sound sources
 let musicVol = new Tone.Volume(0);
 let controlsVol = new Tone.Volume(0);
+let verb = new Tone.Freeverb(); // Not currently used
+verb.wet.value = 0.2;
 
 // Array Idea
 let kick16 = [
@@ -324,7 +326,7 @@ function selectSlice(val) {
             playSliceAudio(myPizza.numSlices, currentSlice, beatState);
         }
         else {
-            myVoice.speak('Slice ' + currentSlice);
+            myVoice.speak(currentSlice);
         }
     }
 }
@@ -334,7 +336,7 @@ function play() {
         console.log('start playing');
         Tone.Transport.start();
         currentVolSetting.setWhenPlaying();
-        
+
         isPlaying = true;
     } else {
         console.log('stop playing');
@@ -663,4 +665,3 @@ function volSetting(num){
 function mod(n, m) {
   return ((n % m) + m) % m;
 }
-
