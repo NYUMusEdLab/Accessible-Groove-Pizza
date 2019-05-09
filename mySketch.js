@@ -104,20 +104,6 @@ function preload() {
     // audio cues
     myVoice = new p5.Speech();
     myVoice.onLoad = voicesLoaded;
-
-    audioMode = new AudioMode(0, {
-        musicVol: musicVol,
-        voice: myVoice,
-        controlsVol: controlsVol
-    });
-
-    // audio detection
-    /*
-    myRec = new p5.SpeechRec(); // speech recognition object (will prompt for mic access)
-    myRec.continuous = true; // do continuous recognition
-    myRec.onResult = showResult; // bind callback function to trigger when speech is recognized
-    myRec.start(); // start listening
-    */
 }
 
 function setup() {
@@ -125,6 +111,13 @@ function setup() {
 
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
+
+    audioMode = new AudioMode(0, {
+        musicVol: musicVol,
+        voice: myVoice,
+        controlsVol: controlsVol
+    });
+    audioMode.setDefaults();
 
     instructions = createA('#', currentInstructions[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
@@ -530,7 +523,7 @@ let offSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master
 let onSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
 offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
 onSynth.set({"oscillator":{"type":"square"}});
-onSynth.volume.val = -20;
+onSynth.volume.value = -12;
 
 let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
                'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',

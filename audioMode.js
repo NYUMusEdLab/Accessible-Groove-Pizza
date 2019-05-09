@@ -7,40 +7,49 @@ function AudioMode(num, volumes){
     this.voice = volumes.voice;
     this.controlsVol = volumes.controlsVol;
 
+    this.setDefaults = function() {
+        this.musicVol.volume.value = -18;
+        this.voice.setVolume(1);
+        this.controlsVol.volume.value = 0;
+    }
+
     this.getMode = function() {
         return this.audioModes[this.num];
     }
 
     this.changeSettingTo = function(num){
         this.num = mod(num, this.numOfSettings);
-        this.speakMode();
-        this.setVolumeMode();
+        this.setMode();
     }
 
     this.changeSettingRight = function() {
         this.num = mod(this.num += 1, this.numOfSettings);
         this.speakMode();
-        this.setVolumeMode();
+        this.setMode();
     }
 
     this.changeSettingLeft = function() {
         this.num = mod(this.num -= 1, this.numOfSettings);
         this.speakMode();
-        this.setVolumeMode();
+        this.setMode();
     }
 
     this.setMode = function() {
-        let modes = [
-            this.setToPractice,
-            this.setToSonify,
-            this.setToPerform
-        ]
-        modes[this.num]();
+        switch(this.num) {
+            case 0:
+                this.setToPractice();
+                break;
+            case 1:
+                this.setToSonify();
+                break;
+            case 2:
+                this.setToPerform();
+        }
     }
 
     this.setToPractice = function() {
         this.musicVol.volume.rampTo(-18, 1);
-        this.voice.setVolume(0.3);
+        this.voice.setVolume(1);
         this.controlsVol.volume.rampTo(0, 1);
     }
 
