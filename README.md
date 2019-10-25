@@ -1,5 +1,5 @@
 # Accessible Groove Pizza
-**The current version of this prototype is available free online**
+**The current version of this prototype is available free online. It works best in Chrome.**
  * https://nyumusedlab.github.io/Accessible-Groove-Pizza/
 
 ## Overview
