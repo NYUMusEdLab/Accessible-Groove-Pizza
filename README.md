@@ -5,13 +5,6 @@
 ## Overview
 This project is a prototype version of the [NYU Groove Pizza](https://apps.musedlab.org/groovepizza) that supports keyboard input with customizable key mappings, text-to-speech/sonification output, swappable color palettes, and more. It is meant to be usable with limited or no vision.
 
-### Run locally
-After downloading, simply navigate to the source directory and fire up an HTML server.
-```
-$ python -m SimpleHTTPServer
-Serving HTTP on 0.0.0.0 port 8000 ...
-```
-
 ## Keyboard Mappings
 
 ### Constants
@@ -60,6 +53,13 @@ This mapping makes it easy to control notes relative to the position in the meas
 
 4 - 16th grouping 4
 * D F G H - 13 14 15 16
+
+### Run locally
+After downloading, simply navigate to the source directory and fire up an HTML server.
+```
+$ python -m SimpleHTTPServer
+Serving HTTP on 0.0.0.0 port 8000 ...
+```
 
 ## Dependencies
 This prototype is built on top of the following libraries:
