@@ -81,7 +81,7 @@ const colors4 = {
   innerRing: {r: 112, g: 140, b: 172}, //
   innerShape: {r: 152, g: 180, b: 212},
   innerNodeOn:{r: 152, g: 180, b: 212},
-  pizzaCenter: {r: 204, g: 107, b: 0}, //
+  pizzaCenter: {r: 153, g: 51, b: 0}, //
   nodeOff: {r: 250, g: 250, b: 250}, //
 
   text: {r: 250, g: 250, b: 250}, // white
@@ -89,7 +89,7 @@ const colors4 = {
 }
 
 const colors5 = {
-  background: {r: 112, g: 140, b: 172}, //
+  background: {r: 255, g: 255, b: 255}, //
   outerRing: {r: 240, g: 200, b: 170}, //
   outerShape: {r: 140, g: 100, b: 85},
   outerNodeOn:{r: 140, g: 100, b: 85},
@@ -97,11 +97,35 @@ const colors5 = {
   middleShape: {r: 20, g: 30, b: 45},
   middleNodeOn:{r: 20, g: 30, b: 45},
   innerRing: {r: 120, g: 120, b: 140}, //
-  innerShape: {r: 240, g: 200, b: 170},
-  innerNodeOn:{r: 240, g: 200, b: 170},
+  innerShape: {r: 60, g: 60, b: 70},
+  innerNodeOn:{r: 60, g: 60, b: 70},
   pizzaCenter: {r: 112, g: 140, b: 172}, //
   nodeOff: {r: 250, g: 250, b: 250}, //
 
-  text: {r: 250, g: 250, b: 250}, // white
-  htmlText: 'white'
+  text: {r: 0, g: 0, b: 0}, // black
+  htmlText: 'black'
+}
+
+// for the poster demo
+const colors6 = {
+  background: {r: 255, g: 255, b: 255}, // white
+
+  outerRing: {r: 57, g: 28, b: 84}, 
+  outerShape: {r: 39, g: 118, b: 138}, 
+  outerNodeOn:{r: 39, g: 118, b: 138},
+
+  middleRing: {r: 174, g: 133, b: 212},
+  middleShape: {r: 61, g: 187, b: 219},
+  middleNodeOn:{r: 61, g: 187, b: 219},
+
+  innerRing: {r: 91, g: 44, b: 134}, 
+  innerShape: {r: 71, g: 218, b: 255}, 
+  innerNodeOn:{r: 71, g: 218, b: 255},
+
+  pizzaCenter: {r: 127, g: 98, b: 155},
+
+  nodeOff: {r: 250, g: 250, b: 250}, // white
+
+  text: {r: 0, g: 0, b: 0}, // black
+  htmlText: 'black'
 }

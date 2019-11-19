@@ -157,8 +157,8 @@ function PizzaSlices(layer, numSlices, sliceX, sliceY, sliceSize, colorPalette) 
         // change angle mode to RADIANS!
         angleMode(RADIANS);
 
-        // stroke color light grey
-        stroke(200);
+        // stroke color grey
+        stroke(100);
         let layerColor;
         if (this.layer == 4){
             layerColor = this.colorPalette.outerRing;
