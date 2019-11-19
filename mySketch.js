@@ -94,7 +94,7 @@ let currentKeyMapIndex = 0;
 let currentKeyMap = keymapArray[0];
 
 // volume settings
-let currentVolSetting = new volSetting(0);
+let audioMode;
 
 let myPizza = new Pizza(1920 / 2.5, 1080 / 3, 100, 1.5, numBeats, colorPalette);
 let myVoice;
@@ -104,14 +104,6 @@ function preload() {
     // audio cues
     myVoice = new p5.Speech();
     myVoice.onLoad = voicesLoaded;
-
-    // audio detection
-    /*
-    myRec = new p5.SpeechRec(); // speech recognition object (will prompt for mic access)
-    myRec.continuous = true; // do continuous recognition
-    myRec.onResult = showResult; // bind callback function to trigger when speech is recognized
-    myRec.start(); // start listening
-    */
 }
 
 function setup() {
@@ -119,6 +111,12 @@ function setup() {
 
     // show the pizza nodes objects
     console.log(myPizza.pizzaSlicesArr);
+    audioMode = new AudioMode(0, {
+        musicVol: musicVol,
+        voice: myVoice,
+        controlsVol: controlsVol
+    });
+    audioMode.setDefaults();
 
     instructions = createP(currentInstructions[0]);
     instructions.position(150 - 50, windowHeight / 2 - 150);
@@ -238,7 +236,7 @@ function draw() {
     noStroke();
     fill(colorPalette.text.r, colorPalette.text.g, colorPalette.text.b);
     text('Current Layer: ' + currentLayer + '   Current Slice: ' + currentSlice, 80, height / 2 + 110);
-    text('Current Mode: ' + currentVolSetting.getAudioMode(), 80, height / 2 + 150);
+    text('Current Mode: ' + audioMode.getMode(), 80, height / 2 + 150);
     pop();
 }
 
@@ -283,7 +281,7 @@ function selectInst(val) {
             myVoice.speak('Instrument.');
     }
     else {
-        if (currentVolSetting.getAudioMode() === 'Sonify') {
+        if (audioMode.getMode() === 'Sonify') {
             // play the actual sound
             //playSound(currentInst.sounds[currentLayer - 2]);
             playSound(currentInst.sounds[currentLayer - 2][1]);
@@ -304,7 +302,7 @@ function selectSlice(val) {
     }
     else {
         currentSlice = val;
-        if (currentVolSetting.getAudioMode() === 'Sonify') {
+        if (audioMode.getMode() === 'Sonify') {
             let beatState = beats[currentLayer - 2][currentSlice - 1];
             playSliceAudio(myPizza.numSlices, currentSlice, beatState);
         }
@@ -440,8 +438,8 @@ function keyReleased() {
         currentKeyMap = keymapArray[currentKeyMapIndex];
     }
     // switch volume settings
-    else if (keyCode == KEY_MINUS){ currentVolSetting.changeVolSettingLeft(); }
-    else if (keyCode == KEY_EQUAL){ currentVolSetting.changeVolSettingRight(); }
+    else if (keyCode == KEY_MINUS){ audioMode.changeSettingLeft(); }
+    else if (keyCode == KEY_EQUAL){ audioMode.changeSettingRight(); }
 
     pressedKeyMap.delete(keyCode);
     lastKeyReleased = keyCode;
@@ -524,7 +522,7 @@ let offSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master
 let onSynth = new Tone.PolySynth (4, Tone.Synth).chain(controlsVol, Tone.Master);
 offSynth.set({"oscillator":{"type":"triangle"}}, {"volume":{"value":-6}});
 onSynth.set({"oscillator":{"type":"square"}});
-onSynth.volume.val = -20;
+onSynth.volume.value = -12;
 
 let noteArr = ['E3', 'F3', 'G3', 'A3', 'B3',
                'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4',
@@ -552,82 +550,3 @@ function playSliceAudio(numSlices, slice, sliceIsActive){
 }
 
 //////////////////////////// End of AUDIO CUES///////////////////////////////////////////
-
-
-///////////////////////////////////// Volume Controls /////////////////////////////////////
-/*
-myVoice.setVolume(); //0 -1
-
-// synth volume
-offSynth.set({"oscillator": {"volume":{"value":-6}});
-onSynth.set({"oscillator": {"volume":{"value":-10}});
-
-// instrumental sounds
-for (let i = 0; i < currentInst.sounds.length; i++){
-    currentInst.sounds[i].volume.value = -6;
-}
-*/
-
-function volSetting(num){
-    this.num = num;
-    this.numOfSettings = 3;
-    this.audioModes = ['Practice', 'Sonify', 'Perform'];
-
-    this.getAudioMode = function() {
-        return this.audioModes[this.num];
-    }
-
-    this.changeVolSettingTo = function(num){
-        this.num = mod(num, this.numOfSettings);
-        this.speakMode();
-        this.setVolumeMode();
-    }
-
-    this.changeVolSettingRight = function() {
-        this.num = mod(this.num += 1, this.numOfSettings);
-        this.speakMode();
-        this.setVolumeMode();
-    }
-
-    this.changeVolSettingLeft = function() {
-        this.num = mod(this.num -= 1, this.numOfSettings);
-        this.speakMode();
-        this.setVolumeMode();
-    }
-
-    this.setVolumeMode = function() {
-        let modes = [
-            this.setToPractice,
-            this.setToSonify,
-            this.setToPerform
-        ]
-        modes[this.num]();
-    }
-
-    this.setToPractice = function() {
-        musicVol.volume.rampTo(-18, 1);
-        myVoice.setVolume(0.3);
-        controlsVol.volume.rampTo(0, 1);
-    }
-
-    this.setToSonify = function() {
-        musicVol.volume.rampTo(-10, 1);
-        myVoice.setVolume(1);
-        controlsVol.volume.rampTo(0, 1);
-    }
-
-    this.setToPerform = function() {
-        musicVol.volume.rampTo(0, 1);
-        myVoice.setVolume(0);
-        controlsVol.volume.rampTo(-30, 1);
-    }
-
-    this.speakMode = function() {
-        myVoice.setVolume(1);
-        myVoice.speak(this.getAudioMode());
-    }
-}
-
-function mod(n, m) {
-  return ((n % m) + m) % m;
-}

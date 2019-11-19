@@ -1,39 +1,38 @@
 # Accessible Groove Pizza
- https://nyumusedlab.github.io/Accessible-Groove-Pizza/
+**The current version of this prototype is available free online. It works best in Chrome.**
+ * https://nyumusedlab.github.io/Accessible-Groove-Pizza/
 
 ## Overview
 This project is a prototype version of the [NYU Groove Pizza](https://apps.musedlab.org/groovepizza) that supports keyboard input with customizable key mappings, text-to-speech/sonification output, swappable color palettes, and more. It is meant to be usable with limited or no vision.
-
-### Run locally
-After downloading, simply navigate to the source directory and fire up an HTML server.
-```
-$ python -m SimpleHTTPServer
-Serving HTTP on 0.0.0.0 port 8000 ...
-```
 
 ## Keyboard Mappings
 
 ### Constants
 fn + UP_ARROW / DOWN_ARROW - Switch between different mappings
 
-TAB - Toggle between interface elements and use ARROW keys on selected element.
+TAB - Toggle between interface elements (instructions, tempo, number of slices) and use ARROW keys on selected element.
 
 SPACE - Start/Stop
+
+'+' / '-' - Iterate through audio settings.
+* Practice Mode - Screenreader (text-to-speech) is turned on and music volume is lowered.
+* Sonification - Most text-to-speech is replaced with tones.
+* Performance - All non-music sounds silenced and music turned to full volume.
 
 ### Default Mapping
 This mapping makes it easy to differentiate between eighth notes and sixteenth-note offbeats.
 
 1 - Switch drum sets
-* Q - drum set 1
-* A - drum set 2
-* W - drum set 3
+* Q - 16-bit
+* A - Rock Drums
+* W - Bongos
 
 ***
 2 - Toggle inner layer (Usually high-pitched drum)
 
 3 - Toggle middle layer (Usually middle-pitched drum)
 
-4 - Toggle outer layer (Usually middle-pitched drum)
+4 - Toggle outer layer (Usually low-pitched drum)
 
 * Q to I - Odd number slice (quarter/eigth notes)
 * A to K - Even number slice (sixteenth notes)
@@ -54,6 +53,13 @@ This mapping makes it easy to control notes relative to the position in the meas
 
 4 - 16th grouping 4
 * D F G H - 13 14 15 16
+
+### Run locally
+After downloading, simply navigate to the source directory and fire up an HTML server.
+```
+$ python -m SimpleHTTPServer
+Serving HTTP on 0.0.0.0 port 8000 ...
+```
 
 ## Dependencies
 This prototype is built on top of the following libraries:
