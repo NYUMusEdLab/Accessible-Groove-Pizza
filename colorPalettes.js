@@ -107,19 +107,20 @@ const colors5 = {
 }
 
 // for the poster demo
+// 51, 153, 255
 const colors6 = {
-  background: {r: 255, g: 255, b: 255}, // white
+  background: {r: 204, g: 204, b: 255}, // white
 
-  outerRing: {r: 57, g: 28, b: 84}, 
-  outerShape: {r: 39, g: 118, b: 138}, 
+  outerRing: {r: 57, g: 28, b: 84},
+  outerShape: {r: 39, g: 118, b: 138},
   outerNodeOn:{r: 39, g: 118, b: 138},
 
   middleRing: {r: 174, g: 133, b: 212},
   middleShape: {r: 61, g: 187, b: 219},
   middleNodeOn:{r: 61, g: 187, b: 219},
 
-  innerRing: {r: 91, g: 44, b: 134}, 
-  innerShape: {r: 71, g: 218, b: 255}, 
+  innerRing: {r: 91, g: 44, b: 134},
+  innerShape: {r: 71, g: 218, b: 255},
   innerNodeOn:{r: 71, g: 218, b: 255},
 
   pizzaCenter: {r: 127, g: 98, b: 155},

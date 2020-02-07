@@ -88,7 +88,7 @@ let soundArr = [{
 let currentInst = soundArr[0]; // default
 
 // Visuals
-let colorPaletteArr = [colors1, colors2, colors4];
+let colorPaletteArr = [colors6, colors2, colors4];
 let colorPalette = colorPaletteArr[0];
 let currentKeyMapIndex = 0;
 let currentKeyMap = keymapArray[0];
