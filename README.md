@@ -3,7 +3,7 @@
  * https://nyumusedlab.github.io/Accessible-Groove-Pizza/
 
 ## Overview
-This project is a prototype version of the [NYU Groove Pizza](https://apps.musedlab.org/groovepizza) that supports keyboard input with customizable key mappings, text-to-speech/sonification output, swappable color palettes, and more. It is meant to be usable with limited or no vision.
+This project is a prototype version of the [NYU Groove Pizza](https://apps.musedlab.org/groovepizza) that supports keyboard input with customizable key mappings, text-to-speech/sonification output, swappable color palettes, and more. It is meant to be usable with limited or no vision. Quickstart graphic can be found [here](https://freight.cargo.site/w/1091/q/94/i/7d0be246ce0bd1c13b2bc6fb47af18158ede10e32566d7a557519ab61077ac9d/poster.jpg).
 
 ## Keyboard Mappings
 
@@ -53,6 +53,9 @@ This mapping makes it easy to control notes relative to the position in the meas
 
 4 - 16th grouping 4
 * D F G H - 13 14 15 16
+
+### Quickstart Graphic
+![quickstart graphic](https://freight.cargo.site/w/1091/q/94/i/7d0be246ce0bd1c13b2bc6fb47af18158ede10e32566d7a557519ab61077ac9d/poster.jpg)
 
 ### Run locally
 After downloading, simply navigate to the source directory and fire up an HTML server.
